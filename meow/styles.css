@@ -1,0 +1,135 @@
+:root {
+  --bg: #050505;
+  --lyric: rgba(246, 241, 225, 0.18);
+  --lyric-bright: rgba(255, 246, 218, 0.34);
+  color-scheme: dark;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  min-height: 100%;
+}
+
+body {
+  min-height: 100dvh;
+  margin: 0;
+  overflow: hidden;
+  background:
+    radial-gradient(circle at 50% 48%, rgba(255, 229, 176, 0.12), transparent 31rem),
+    radial-gradient(circle at 24% 22%, rgba(95, 156, 255, 0.12), transparent 22rem),
+    radial-gradient(circle at 78% 76%, rgba(255, 111, 158, 0.1), transparent 24rem),
+    var(--bg);
+}
+
+.animation-shell {
+  position: relative;
+  isolation: isolate;
+  display: grid;
+  place-items: center;
+  width: 100vw;
+  height: 100dvh;
+  overflow: hidden;
+  background:
+    linear-gradient(rgba(255, 255, 255, 0.018) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 255, 255, 0.018) 1px, transparent 1px);
+  background-size: 44px 44px;
+}
+
+.animation-shell::after {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  content: "";
+  pointer-events: none;
+  background:
+    radial-gradient(circle at 50% 50%, transparent 0 35%, rgba(5, 5, 5, 0.2) 52%, rgba(5, 5, 5, 0.74) 100%),
+    linear-gradient(180deg, rgba(255, 255, 255, 0.035), transparent 16%, transparent 78%, rgba(255, 255, 255, 0.035));
+  mix-blend-mode: normal;
+}
+
+.lyric-background {
+  position: absolute;
+  inset: -16vmax;
+  z-index: 0;
+  overflow: hidden;
+  pointer-events: none;
+  transform: rotate(-8deg);
+  opacity: 0;
+  transition: opacity 1.2s ease;
+  filter: blur(0.15px);
+  mask-image: radial-gradient(circle at 50% 50%, rgba(0, 0, 0, 0.98) 0 42%, rgba(0, 0, 0, 0.62) 64%, transparent 91%);
+}
+
+.lyric-background.is-ready {
+  opacity: 1;
+}
+
+.lyric-track {
+  position: absolute;
+  display: flex;
+  gap: clamp(28px, 4vw, 72px);
+  width: max-content;
+  white-space: nowrap;
+  will-change: transform;
+  animation: lyric-drift var(--duration, 30s) linear infinite;
+}
+
+.lyric-track:nth-child(even) {
+  animation-direction: reverse;
+}
+
+.lyric-track span {
+  color: var(--lyric);
+  font-family:
+    ui-sans-serif,
+    system-ui,
+    "PingFang SC",
+    "Microsoft YaHei",
+    sans-serif;
+  font-size: clamp(34px, 7vw, 108px);
+  font-weight: 900;
+  letter-spacing: 0;
+  line-height: 1;
+  text-shadow:
+    0 0 18px rgba(255, 230, 190, 0.09),
+    0 0 54px rgba(255, 230, 190, 0.08);
+}
+
+.lyric-track span:nth-child(3n) {
+  color: var(--lyric-bright);
+}
+
+.lyric-track span:nth-child(4n) {
+  font-style: italic;
+}
+
+@keyframes lyric-drift {
+  from {
+    transform: translate3d(-8%, 0, 0);
+  }
+
+  to {
+    transform: translate3d(-58%, 0, 0);
+  }
+}
+
+#pixelCanvas {
+  position: relative;
+  z-index: 2;
+  display: block;
+  width: min(92vmin, 900px);
+  height: auto;
+  aspect-ratio: 1 / 1;
+  image-rendering: pixelated;
+  filter:
+    drop-shadow(0 22px 42px rgba(0, 0, 0, 0.55))
+    drop-shadow(0 0 16px rgba(255, 236, 202, 0.08));
+}
+
+#sampleCanvas {
+  display: none;
+}

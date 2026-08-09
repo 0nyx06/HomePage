@@ -1,0 +1,417 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="color-scheme" content="dark" />
+    <meta name="theme-color" content="#0a0a0a" />
+    <link rel="icon" href="/assets/favicon.png?v=2" />
+    <title>0Nyx — 全栈开发者</title>
+    <meta
+      name="description"
+      content="0Nyx，独立全栈开发者。设计并构建跨 Web、移动端与 AI 的完整产品，从后端架构到像素级交互界面。"
+    />
+    <link rel="canonical" href="https://www.0nyx.cn/" />
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="0Nyx" />
+    <meta property="og:title" content="0Nyx — 全栈开发者" />
+    <meta
+      property="og:description"
+      content="独立全栈开发者。设计并构建跨 Web、移动端与 AI 的完整产品，从后端架构到像素级交互界面。"
+    />
+    <meta property="og:url" content="https://www.0nyx.cn/" />
+    <meta property="og:image" content="https://www.0nyx.cn/assets/og.png" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="0Nyx — 全栈开发者" />
+    <meta
+      name="twitter:description"
+      content="独立全栈开发者。设计并构建跨 Web、移动端与 AI 的完整产品。"
+    />
+    <meta name="twitter:image" content="https://www.0nyx.cn/assets/og.png" />
+    <link rel="preload" href="/assets/fonts/bricolage-grotesque-latin.woff2" as="font" type="font/woff2" crossorigin />
+    <link rel="preload" href="/assets/fonts/hanken-grotesk-latin.woff2" as="font" type="font/woff2" crossorigin />
+    <link rel="preload" href="/assets/fonts/jetbrains-mono-latin.woff2" as="font" type="font/woff2" crossorigin />
+    <link rel="preload" href="/assets/fonts/noto-sans-sc-page.woff2" as="font" type="font/woff2" crossorigin />
+    <link rel="stylesheet" href="./styles.css?v=20260810g" />
+    <script>
+      // Mark JS available so reveal animations enhance an already-visible baseline.
+      document.documentElement.classList.add("js");
+    </script>
+  </head>
+  <body>
+    <a class="skip-link" href="#work">跳到作品</a>
+
+    <!-- Full-page pointer field (page-space lattice; scrolls with document) -->
+    <div class="page-field" aria-hidden="true">
+      <canvas class="page-field__canvas" id="field"></canvas>
+      <div class="page-field__glow" id="glow"></div>
+    </div>
+
+    <header class="site-header" id="top">
+      <a class="brand" href="#top" aria-label="0Nyx 首页">
+        <span class="brand__mark" aria-hidden="true"></span>
+        <span class="brand__text">0<span class="brand__accent">Nyx</span></span>
+      </a>
+      <nav class="site-nav" aria-label="主导航">
+        <a href="#work">作品</a>
+        <a href="#about">关于</a>
+        <a href="#stack">技术</a>
+        <a href="#links">友链</a>
+        <a class="site-nav__cta" href="#contact">联系</a>
+      </nav>
+      <button
+        class="nav-toggle"
+        id="navToggle"
+        type="button"
+        aria-expanded="false"
+        aria-controls="mobileNav"
+        aria-label="打开导航"
+      >
+        <span aria-hidden="true"></span>
+        <span aria-hidden="true"></span>
+      </button>
+      <nav class="mobile-nav" id="mobileNav" aria-label="移动端导航" hidden>
+        <a href="#about"><span class="mono">01</span>关于</a>
+        <a href="#stack"><span class="mono">02</span>技术</a>
+        <a href="#work"><span class="mono">03</span>作品</a>
+        <a href="#links"><span class="mono">04</span>友链</a>
+        <a href="#contact"><span class="mono">05</span>联系</a>
+      </nav>
+    </header>
+    <button class="nav-scrim" id="navScrim" type="button" aria-label="关闭导航" hidden></button>
+
+    <main>
+      <!-- HERO -->
+      <section class="hero" aria-label="介绍">
+        <div class="hero__inner">
+          <div class="hero__copy">
+            <a class="hero__avatar-link" href="/meow/" data-reveal title="彩蛋：月薪喵" aria-label="打开彩蛋：月薪喵">
+              <img class="hero__avatar" src="/assets/avatar.png" alt="0Nyx 的头像" width="88" height="88" loading="eager" decoding="async" />
+            </a>
+            <p class="hero__status" data-reveal>
+              <span class="status-dot" aria-hidden="true"></span>
+              <span class="mono">现可接受合作</span>
+              <span class="hero__status-sep" aria-hidden="true">/</span>
+              <span class="mono">Based in China</span>
+            </p>
+
+            <h1 class="hero__title" data-reveal>
+              <span class="hero__title-line">0<span class="hero__title-accent">Nyx</span></span>
+            </h1>
+
+            <p class="hero__role mono" data-reveal>全栈开发者 · Full-stack developer</p>
+
+            <p class="hero__lede" data-reveal>
+              我独立设计并构建跨 Web、移动端与 AI 的完整产品，
+              从后端架构、数据建模，到像素级的交互界面。
+            </p>
+
+            <div class="hero__actions" data-reveal>
+              <a class="btn btn--primary" href="#work">
+                查看作品
+                <svg viewBox="0 0 24 24" aria-hidden="true" class="btn__icon"><path d="M5 12h14M13 6l6 6-6 6" /></svg>
+              </a>
+              <a class="btn btn--ghost" href="#contact">联系我</a>
+            </div>
+          </div>
+
+          <div class="hero__art" data-reveal>
+            <div class="term" id="term" role="group" aria-label="交互式终端，输入 help 查看可用命令">
+              <div class="term__bar">
+                <span class="term__dot"></span>
+                <span class="term__dot"></span>
+                <span class="term__dot"></span>
+                <span class="term__title mono">0nyx@host — zsh</span>
+              </div>
+              <div class="term__body mono" id="termBody">
+                <div class="term__out" id="termOut" aria-live="polite">
+                  <p class="term__line term__line--boot" style="--i: 0"><span class="term__prompt">$</span> whoami</p>
+                  <p class="term__line term__line--boot term__line--out" style="--i: 1">0Nyx · full-stack developer</p>
+                  <p class="term__line term__line--boot" style="--i: 2"><span class="term__prompt">$</span> ls skills/</p>
+                  <p class="term__line term__line--boot term__line--out" style="--i: 3">android/  web/  backend/  ai/</p>
+                  <p class="term__line term__line--boot" style="--i: 4"><span class="term__prompt">$</span> status --products</p>
+                  <p class="term__line term__line--boot term__line--out" style="--i: 5"><span class="term__ok">●</span> 2 services online · shipping</p>
+                </div>
+                <p class="term__line term__line--boot" style="--i: 6" id="termCaretLine"><span class="term__prompt">$</span> <span class="term__caret"></span></p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <a class="hero__scroll mono" href="#about" aria-label="向下滚动">
+          <span>scroll</span>
+          <span class="hero__scroll-line" aria-hidden="true"></span>
+        </a>
+      </section>
+
+      <!-- ABOUT -->
+      <section class="section about" id="about" aria-labelledby="about-h">
+        <div class="section__head">
+          <span class="section__index mono" data-reveal>01 / about</span>
+          <h2 class="section__title" id="about-h" data-reveal>
+            做能跑起来、也经得起细看的东西。
+          </h2>
+        </div>
+        <div class="about__body">
+          <p class="about__lead" data-reveal>
+            我是 0Nyx，一名独立全栈开发者。习惯一个人把产品从想法做到上线：
+            设计后端与数据库、写 Android / 小程序 / Web 客户端、接入 AI 能力，再自己部署运维。
+          </p>
+          <ul class="capabilities" aria-label="工作领域">
+            <li class="capability" data-reveal>
+              <span class="capability__no mono">01</span>
+              <div class="capability__text">
+                <h3>全栈 Web</h3>
+                <p>用 NestJS + PostgreSQL 搭后端与数据模型，Vue 3 写前端，关注性能、状态边界与长期可维护性。</p>
+              </div>
+            </li>
+            <li class="capability" data-reveal>
+              <span class="capability__no mono">02</span>
+              <div class="capability__text">
+                <h3>移动端</h3>
+                <p>原生 Android（Kotlin / Jetpack Compose）与微信小程序（UniApp X），做克制、流畅、好用的界面。</p>
+              </div>
+            </li>
+            <li class="capability" data-reveal>
+              <span class="capability__no mono">03</span>
+              <div class="capability__text">
+                <h3>AI 集成</h3>
+                <p>把大模型、语音合成与识别真正接进产品，做成稳定可用的功能，而不是演示 Demo。</p>
+              </div>
+            </li>
+          </ul>
+        </div>
+      </section>
+
+      <!-- STACK -->
+      <section class="section stack" id="stack" aria-labelledby="stack-h">
+        <div class="section__head">
+          <span class="section__index mono" data-reveal>02 / stack</span>
+          <h2 class="section__title" id="stack-h" data-reveal>常用的工具与栈</h2>
+        </div>
+        <div class="stack__grid">
+          <div class="stack__group" data-reveal>
+            <h3 class="stack__label mono">移动端</h3>
+            <ul class="tags">
+              <li>Kotlin</li><li>Jetpack Compose</li><li>Material 3</li><li>UniApp X</li><li>微信小程序</li>
+            </ul>
+          </div>
+          <div class="stack__group" data-reveal>
+            <h3 class="stack__label mono">后端</h3>
+            <ul class="tags">
+              <li>NestJS</li><li>Node.js</li><li>TypeScript</li><li>Fastify</li><li>Prisma</li><li>PostgreSQL</li><li>Redis</li>
+            </ul>
+          </div>
+          <div class="stack__group" data-reveal>
+            <h3 class="stack__label mono">前端</h3>
+            <ul class="tags">
+              <li>Vue 3</li><li>Vite</li><li>HTML / CSS</li><li>Canvas</li>
+            </ul>
+          </div>
+          <div class="stack__group" data-reveal>
+            <h3 class="stack__label mono">AI 能力</h3>
+            <ul class="tags">
+              <li>LLM 集成</li><li>TTS / ASR</li><li>Agent 编排</li>
+            </ul>
+          </div>
+          <div class="stack__group" data-reveal>
+            <h3 class="stack__label mono">工具与部署</h3>
+            <ul class="tags">
+              <li>Git</li><li>Docker</li><li>Nginx</li><li>PM2</li><li>宝塔面板</li>
+            </ul>
+          </div>
+        </div>
+      </section>
+
+      <!-- WORK -->
+      <section class="section work" id="work" aria-labelledby="work-h">
+        <div class="section__head">
+          <span class="section__index mono" data-reveal>03 / work</span>
+          <h2 class="section__title" id="work-h" data-reveal>近期在做的东西</h2>
+        </div>
+
+        <!-- Album-style gallery -->
+        <div class="gallery" id="workGallery" role="region" aria-roledescription="轮播" aria-label="作品相册">
+          <div class="gallery__viewport" id="galleryViewport" tabindex="0" aria-label="作品相册，左右滑动或使用方向键切换">
+            <div class="gallery__slide" role="group" aria-roledescription="相册页" aria-label="第 1 页，共 4 页">
+              <a class="feature" href="https://github.com/0nyx06/listene" rel="noopener" target="_blank" data-reveal data-tilt>
+                <div class="feature__meta">
+                  <span class="feature__tag mono">Android · AI Agent</span>
+                  <h3 class="feature__title">ListenE</h3>
+                  <p class="feature__desc">
+                    一个面向英语学习的 Android AI Agent 应用。AI 生成听力素材与练习卡片，
+                    支持精听、错因复盘，并把学习需求沉淀成可持续的工作区。
+                  </p>
+                  <ul class="feature__stack mono" aria-label="技术栈">
+                    <li>Kotlin</li><li>Compose</li><li>NestJS</li><li>PostgreSQL</li><li>MiMo AI</li>
+                  </ul>
+                  <span class="feature__link mono">
+                    查看 GitHub 仓库
+                    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6" /></svg>
+                  </span>
+                </div>
+                <div class="feature__art" aria-hidden="true">
+                  <div class="device">
+                    <div class="device__screen">
+                      <span class="device__bubble device__bubble--in">生成一段雅思听力练习</span>
+                      <span class="device__bubble device__bubble--out">已生成 · 对话 + 5 题 + 音频</span>
+                      <span class="device__bubble device__bubble--card mono">card · listening</span>
+                    </div>
+                  </div>
+                </div>
+              </a>
+            </div>
+
+            <div class="gallery__slide" role="group" aria-roledescription="相册页" aria-label="第 2 页，共 4 页">
+              <a class="feature feature--reverse" href="https://0nyx.cn/mqlt/" rel="noopener" target="_blank" data-reveal data-tilt>
+                <div class="feature__meta">
+                  <span class="feature__tag mono">产业研学 · 全栈</span>
+                  <h3 class="feature__title">蒙企链探</h3>
+                  <p class="feature__desc">
+                    面向内蒙古食品产业的研学服务平台。把龙头企业资源做成可预约、可导览打卡、
+                    可沉淀成果的研学闭环，并打通积分成长、商城兑换与企业运营后台。
+                  </p>
+                  <ul class="feature__stack mono" aria-label="技术栈">
+                    <li>NestJS</li><li>Prisma</li><li>PostgreSQL</li><li>UniApp X</li><li>Vue 3</li><li>Redis</li>
+                  </ul>
+                  <span class="feature__link mono">
+                    访问官网
+                    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6" /></svg>
+                  </span>
+                </div>
+                <div class="feature__art">
+                  <canvas
+                    class="mqlt-canvas"
+                    id="mqltCanvas"
+                    width="760"
+                    height="480"
+                    role="img"
+                    aria-label="蒙企链探研学运营数据看板动态示意图"
+                  >蒙企链探研学运营数据看板示意图</canvas>
+                </div>
+              </a>
+            </div>
+
+            <div class="gallery__slide" role="group" aria-roledescription="相册页" aria-label="第 3 页，共 4 页">
+              <a class="feature" href="#contact" data-reveal data-tilt>
+                <div class="feature__meta">
+                  <span class="feature__tag mono">HarmonyOS · AI 仿真 <span class="feature__pill mono">In dev</span></span>
+                  <h3 class="feature__title">方程剧场</h3>
+                  <p class="feature__desc">
+                    面向中学生的鸿蒙 AI 理化学习应用。输入理化题目，
+                    AI 提取参数生成可信的交互式科学仿真，在关键事件处讲解公式、矢量与图像，可改参数重新验证规律。
+                  </p>
+                  <ul class="feature__stack mono" aria-label="技术栈">
+                    <li>HarmonyOS</li><li>ArkTS</li><li>ArkUI</li><li>Node.js</li><li>AI 解析</li>
+                  </ul>
+                  <span class="feature__link mono">
+                    聊聊这个项目
+                    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6" /></svg>
+                  </span>
+                </div>
+                <div class="feature__art">
+                  <canvas
+                    class="eq-canvas"
+                    id="eqCanvas"
+                    width="760"
+                    height="480"
+                    role="img"
+                    aria-label="方程剧场斜抛运动仿真示意动画"
+                  >方程剧场斜抛运动仿真示意图</canvas>
+                </div>
+              </a>
+            </div>
+
+            <div class="gallery__slide" role="group" aria-roledescription="相册页" aria-label="第 4 页，共 4 页">
+              <a class="feature feature--gh" href="https://github.com/0nyx06" rel="noopener" target="_blank" data-reveal data-tilt>
+                <div class="feature__meta">
+                  <span class="feature__tag mono">Code · 开源 <span class="feature__pill mono">GitHub</span></span>
+                  <h3 class="feature__title">更多项目</h3>
+                  <p class="feature__desc">更多代码与实验都在我的 GitHub 上。</p>
+                  <span class="feature__link mono">
+                    打开 github.com/0nyx06
+                    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6" /></svg>
+                  </span>
+                </div>
+                <div class="feature__art" aria-hidden="true">
+                  <span class="feature__glyph mono">GH</span>
+                </div>
+              </a>
+            </div>
+          </div>
+
+          <div class="gallery__controls">
+            <button class="gallery__btn" id="galleryPrev" type="button" aria-controls="galleryViewport" aria-label="上一页">
+              <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M19 12H5M11 6l-6 6 6 6" /></svg>
+            </button>
+            <div class="gallery__dots" id="galleryDots" aria-label="选择相册页"></div>
+            <button class="gallery__btn" id="galleryNext" type="button" aria-controls="galleryViewport" aria-label="下一页">
+              <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6" /></svg>
+            </button>
+          </div>
+        </div>
+      </section>
+
+      <!-- LINKS -->
+      <section class="section friend-links" id="links" aria-labelledby="links-h">
+        <div class="section__head">
+          <span class="section__index mono" data-reveal>04 / links</span>
+          <h2 class="section__title" id="links-h" data-reveal>友链与服务</h2>
+          <p class="friend-links__lede" data-reveal>一些我持续维护的站点与自托管服务。</p>
+        </div>
+        <ul class="friend-links__grid">
+          <li class="friend-link" data-reveal>
+            <a href="https://0nyx.cn/downloads/" target="_blank" rel="noopener">
+              <div class="friend-link__body">
+                <span class="friend-link__tag mono">Web · Resources</span>
+                <h3>资源下载站</h3>
+                <p>集中整理常用工具、文件与项目资源的稳定下载入口。</p>
+                <span class="friend-link__host mono">0nyx.cn/downloads ↗</span>
+              </div>
+            </a>
+          </li>
+        </ul>
+      </section>
+
+      <!-- CONTACT -->
+      <section class="section contact" id="contact" aria-labelledby="contact-h">
+        <div class="contact__inner">
+          <span class="section__index mono" data-reveal>05 / contact</span>
+          <h2 class="contact__title" id="contact-h" data-reveal>
+            <span>有想法？</span><span>一起把它做出来。</span>
+          </h2>
+          <p class="contact__lede" data-reveal>
+            合作、招聘、或者只是想聊聊技术，都欢迎给我发消息。
+          </p>
+          <div class="contact__actions" data-reveal>
+            <a class="btn btn--primary btn--lg" href="mailto:gaoxingyu2006@icloud.com">
+              gaoxingyu2006@icloud.com
+            </a>
+            <button class="btn btn--ghost btn--lg" id="copyEmail" type="button" data-email="gaoxingyu2006@icloud.com">
+              复制邮箱
+            </button>
+          </div>
+          <ul class="socials mono" data-reveal aria-label="社交链接">
+            <li><a href="https://github.com/0nyx06" rel="noopener" target="_blank">GitHub</a></li>
+            <li><button class="social-btn" id="copyWechat" type="button" data-wechat="ITGao06">微信 · ITGao06</button></li>
+            <li><a href="https://0nyx.cn" rel="noopener">0nyx.cn</a></li>
+          </ul>
+        </div>
+      </section>
+    </main>
+
+    <footer class="site-footer">
+      <span class="mono">© <span id="year">2026</span> 0Nyx</span>
+      <nav class="site-footer__links mono" aria-label="站点链接">
+        <a href="#links">友链</a>
+        <a href="https://github.com/0nyx06" target="_blank" rel="noopener">GitHub</a>
+      </nav>
+    </footer>
+
+    <div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+    <script src="./script.js?v=20260810g"></script>
+  </body>
+</html>

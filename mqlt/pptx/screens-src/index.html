@@ -1,0 +1,1440 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>蒙企链探小程序源码截图生成</title>
+  <style>
+    :root {
+      color-scheme: light;
+      --ink: #17211f;
+      --muted: #64748b;
+      --line: #e3eae6;
+      --bg: #edf2f6;
+      --deep: #142f3e;
+      --green: #0f766e;
+      --orange: #b45309;
+      --amber: #f59e0b;
+      --blue: #1565c0;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      background: #dde4ec;
+      color: var(--ink);
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    }
+
+    .screen-stage {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(390px, 1fr));
+      gap: 28px;
+      padding: 28px;
+      align-items: start;
+    }
+
+    .capture-screen {
+      width: 390px;
+      height: 844px;
+      overflow: hidden;
+      position: relative;
+      background: #f2f2f7;
+      border-radius: 0;
+      box-shadow: none;
+    }
+
+    .phone-page {
+      width: 390px;
+      height: 844px;
+      position: relative;
+      overflow: hidden;
+      background: #f2f2f7;
+    }
+
+    .scroll {
+      position: absolute;
+      inset: 0;
+      overflow: hidden;
+    }
+
+    .status {
+      height: 38px;
+      flex: 0 0 auto;
+    }
+
+    .nav {
+      height: 52px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 0 16px;
+      position: relative;
+      font-size: 17px;
+      font-weight: 800;
+      background: #fff;
+      border-bottom: 1px solid rgba(60, 60, 67, .12);
+    }
+
+    .nav .back {
+      position: absolute;
+      left: 16px;
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      font-size: 15px;
+      font-weight: 500;
+      color: #1c1c1e;
+    }
+
+    .nav.dark {
+      background: rgba(0, 0, 0, .18);
+      color: #fff;
+      border: none;
+    }
+
+    .nav.dark .back {
+      color: #fff;
+    }
+
+    .content {
+      padding: 16px;
+    }
+
+    .tabbar {
+      position: absolute;
+      left: 18px;
+      right: 18px;
+      bottom: 16px;
+      height: 64px;
+      border-radius: 32px;
+      background: rgba(255,255,255,.92);
+      box-shadow: 0 10px 30px rgba(15, 23, 42, .14);
+      display: flex;
+      align-items: center;
+      justify-content: space-around;
+      backdrop-filter: blur(18px);
+    }
+
+    .tab {
+      width: 68px;
+      display: grid;
+      place-items: center;
+      gap: 3px;
+      color: #667085;
+      font-size: 11px;
+      font-weight: 700;
+    }
+
+    .tab img {
+      width: 22px;
+      height: 22px;
+    }
+
+    .tab.active {
+      color: #1c384a;
+    }
+
+    .hero-home {
+      height: 432px;
+      position: relative;
+      color: #fff;
+      overflow: hidden;
+    }
+
+    .hero-home .media {
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(180deg, rgba(0,0,0,.08), rgba(0,0,0,.72)), url("../assets/study-projects/study-project-6-factory-campus.png") center / cover no-repeat;
+    }
+
+    .hero-home .copy {
+      position: absolute;
+      left: 22px;
+      right: 22px;
+      bottom: 42px;
+    }
+
+    .hero-home h1,
+    .detail-hero h1 {
+      margin: 0;
+      font-size: 34px;
+      line-height: 1.05;
+      letter-spacing: -0.02em;
+    }
+
+    .hero-home p,
+    .detail-hero p {
+      margin: 12px 0 0;
+      font-size: 14px;
+      line-height: 1.45;
+      color: rgba(255,255,255,.88);
+    }
+
+    .vertical-dots {
+      position: absolute;
+      right: 15px;
+      top: 156px;
+      display: grid;
+      gap: 8px;
+    }
+
+    .vertical-dots span {
+      width: 5px;
+      height: 18px;
+      border-radius: 10px;
+      background: rgba(255,255,255,.45);
+    }
+
+    .vertical-dots span:first-child {
+      background: #fff;
+      height: 32px;
+    }
+
+    .ticket-card {
+      margin: -36px 16px 0;
+      padding: 18px;
+      position: relative;
+      z-index: 3;
+      border-radius: 8px;
+      background: #fff;
+      box-shadow: 0 12px 34px rgba(15, 23, 42, .16);
+    }
+
+    .ticket-head,
+    .row-between {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+    }
+
+    .status-text {
+      color: var(--orange);
+      font-size: 14px;
+      font-weight: 900;
+    }
+
+    .date-text,
+    .hint-text {
+      margin-top: 4px;
+      color: #85540c;
+      font-size: 12px;
+      font-weight: 700;
+    }
+
+    .price {
+      display: flex;
+      align-items: baseline;
+      justify-content: flex-end;
+      color: var(--orange);
+    }
+
+    .price b {
+      font-size: 28px;
+      letter-spacing: -0.03em;
+    }
+
+    .price small {
+      font-size: 12px;
+      font-weight: 800;
+      color: #85540c;
+    }
+
+    .progress {
+      height: 6px;
+      border-radius: 6px;
+      background: #f1f5f9;
+      overflow: hidden;
+      margin-top: 10px;
+    }
+
+    .progress i {
+      display: block;
+      height: 100%;
+      width: 70%;
+      border-radius: inherit;
+      background: var(--orange);
+    }
+
+    .ticket-grid {
+      margin-top: 18px;
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 12px;
+      text-align: center;
+      font-size: 12px;
+      color: #344054;
+      font-weight: 700;
+    }
+
+    .ticket-grid img {
+      width: 26px;
+      height: 26px;
+      padding: 6px;
+      border-radius: 50%;
+      background: #eef6ff;
+      object-fit: contain;
+    }
+
+    .primary-pill {
+      margin-top: 18px;
+      height: 44px;
+      border-radius: 8px;
+      display: grid;
+      place-items: center;
+      color: #fff;
+      font-size: 15px;
+      font-weight: 900;
+      background: linear-gradient(135deg, var(--orange), var(--amber));
+    }
+
+    .news-card,
+    .section-card,
+    .white-card {
+      margin: 14px 16px 0;
+      padding: 16px;
+      border-radius: 8px;
+      background: #fff;
+      border: 1px solid rgba(0,0,0,.04);
+    }
+
+    .section-title {
+      margin: 0;
+      font-size: 18px;
+      font-weight: 900;
+      color: #17211f;
+    }
+
+    .section-sub {
+      margin: 4px 0 0;
+      font-size: 12px;
+      line-height: 1.35;
+      color: #64748b;
+    }
+
+    .news-row {
+      padding-top: 14px;
+      display: grid;
+      gap: 6px;
+      border-bottom: 1px solid #edf2f7;
+      padding-bottom: 14px;
+    }
+
+    .news-row:last-child {
+      border: none;
+      padding-bottom: 0;
+    }
+
+    .tag {
+      display: inline-flex;
+      align-items: center;
+      width: max-content;
+      padding: 4px 8px;
+      border-radius: 999px;
+      color: #fff;
+      background: #0f766e;
+      font-size: 11px;
+      font-weight: 900;
+    }
+
+    .news-title {
+      font-size: 14px;
+      font-weight: 850;
+      color: #1d2939;
+    }
+
+    .news-desc,
+    .card-desc {
+      font-size: 12px;
+      line-height: 1.45;
+      color: #667085;
+    }
+
+    .product-mini-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+      margin-top: 12px;
+    }
+
+    .product-mini img,
+    .product-card img {
+      width: 100%;
+      border-radius: 8px;
+      aspect-ratio: 1 / 1;
+      object-fit: cover;
+      background: #f6f8fb;
+    }
+
+    .product-mini .name,
+    .product-card .name {
+      margin-top: 8px;
+      font-size: 13px;
+      font-weight: 850;
+      color: #17211f;
+    }
+
+    .product-mini .money,
+    .product-card .money {
+      margin-top: 4px;
+      color: #b45309;
+      font-size: 13px;
+      font-weight: 900;
+    }
+
+    .appointment-hero {
+      height: 190px;
+      padding: 38px 18px 18px;
+      color: #fff;
+      background: linear-gradient(135deg, #152e3d, #315d74);
+    }
+
+    .appointment-hero h1 {
+      margin: 18px 0 6px;
+      font-size: 28px;
+      letter-spacing: -0.02em;
+    }
+
+    .appointment-hero p {
+      margin: 0;
+      font-size: 13px;
+      color: rgba(255,255,255,.78);
+    }
+
+    .search-box {
+      margin-top: 18px;
+      height: 46px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 0 14px;
+      border-radius: 8px;
+      background: rgba(255,255,255,.96);
+      color: #98a2b3;
+      font-size: 14px;
+    }
+
+    .search-box img {
+      width: 18px;
+      height: 18px;
+    }
+
+    .category-row {
+      height: 56px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 0 16px;
+      background: #fff;
+      box-shadow: 0 8px 18px rgba(15, 23, 42, .06);
+    }
+
+    .cat {
+      white-space: nowrap;
+      padding: 8px 13px;
+      border-radius: 999px;
+      font-size: 13px;
+      font-weight: 800;
+      color: #475467;
+      background: #f2f4f7;
+    }
+
+    .cat.active {
+      color: #fff;
+      background: #1c384a;
+    }
+
+    .project-list {
+      padding: 16px 16px 96px;
+    }
+
+    .project-card {
+      overflow: hidden;
+      border-radius: 8px;
+      background: #fff;
+      margin-bottom: 16px;
+      box-shadow: 0 10px 24px rgba(15, 23, 42, .08);
+    }
+
+    .project-cover {
+      height: 188px;
+      position: relative;
+      background: #ddd center / cover no-repeat;
+    }
+
+    .project-cover::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(180deg, rgba(0,0,0,.05), rgba(0,0,0,.48));
+    }
+
+    .badge,
+    .price-chip {
+      position: absolute;
+      z-index: 1;
+      top: 14px;
+      padding: 7px 10px;
+      border-radius: 999px;
+      color: #fff;
+      font-size: 12px;
+      font-weight: 900;
+      background: rgba(0,0,0,.48);
+      backdrop-filter: blur(14px);
+    }
+
+    .badge {
+      left: 14px;
+    }
+
+    .price-chip {
+      right: 14px;
+      background: rgba(180,83,9,.92);
+    }
+
+    .project-body {
+      padding: 14px;
+    }
+
+    .project-body h2 {
+      margin: 8px 0 6px;
+      font-size: 18px;
+      line-height: 1.2;
+    }
+
+    .tag-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      margin: 10px 0 0;
+    }
+
+    .soft-tag {
+      padding: 4px 8px;
+      border-radius: 999px;
+      background: #f2f4f7;
+      color: #475467;
+      font-size: 11px;
+      font-weight: 800;
+    }
+
+    .detail-hero {
+      height: 318px;
+      position: relative;
+      color: #fff;
+      background: linear-gradient(180deg, rgba(0,0,0,.05), rgba(0,0,0,.72)), url("../assets/study-projects/study-project-6-processing-line.png") center / cover no-repeat;
+    }
+
+    .detail-hero .hero-copy {
+      position: absolute;
+      left: 20px;
+      right: 20px;
+      bottom: 24px;
+    }
+
+    .detail-body {
+      padding-bottom: 86px;
+    }
+
+    .in-progress {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin: -18px 16px 14px;
+      padding: 14px;
+      border-radius: 8px;
+      background: #fff7ed;
+      border: 1px solid #fed7aa;
+      position: relative;
+      z-index: 2;
+    }
+
+    .in-progress img {
+      width: 32px;
+      height: 32px;
+    }
+
+    .small-btn {
+      flex: 0 0 auto;
+      padding: 8px 10px;
+      border-radius: 8px;
+      background: #b45309;
+      color: #fff;
+      font-size: 12px;
+      font-weight: 900;
+    }
+
+    .route-step {
+      display: grid;
+      grid-template-columns: 28px 1fr;
+      gap: 10px;
+      min-height: 68px;
+    }
+
+    .dotline {
+      display: grid;
+      justify-items: center;
+    }
+
+    .dotline b {
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+      background: #0f766e;
+      margin-top: 3px;
+    }
+
+    .dotline i {
+      width: 2px;
+      flex: 1;
+      min-height: 48px;
+      background: #d9e7e2;
+    }
+
+    .route-step h3 {
+      margin: 0 0 5px;
+      font-size: 15px;
+    }
+
+    .route-step p {
+      margin: 0;
+      color: #667085;
+      font-size: 12px;
+      line-height: 1.35;
+    }
+
+    .bottom-bar {
+      position: absolute;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      height: 78px;
+      padding: 10px 16px 16px;
+      background: rgba(255,255,255,.96);
+      border-top: 1px solid #e5e7eb;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 14px;
+    }
+
+    .bottom-bar .pay {
+      font-size: 22px;
+      font-weight: 950;
+      color: var(--orange);
+    }
+
+    .bottom-bar .action {
+      height: 44px;
+      flex: 0 0 150px;
+      display: grid;
+      place-items: center;
+      border-radius: 8px;
+      color: #fff;
+      font-size: 15px;
+      font-weight: 900;
+      background: linear-gradient(135deg, var(--orange), var(--amber));
+    }
+
+    .login-hero {
+      height: 268px;
+      padding: 38px 24px;
+      color: #fff;
+      background: radial-gradient(circle at 18% 20%, rgba(245,158,11,.55), transparent 30%), linear-gradient(135deg, #152e3d, #071923);
+    }
+
+    .login-hero h1 {
+      margin: 72px 0 8px;
+      font-size: 31px;
+      letter-spacing: -0.02em;
+    }
+
+    .login-panel {
+      margin: -46px 20px 0;
+      padding: 22px 18px;
+      border-radius: 8px;
+      background: #fff;
+      box-shadow: 0 18px 42px rgba(15,23,42,.18);
+      position: relative;
+      z-index: 2;
+    }
+
+    .input-row {
+      height: 48px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      border-bottom: 1px solid #e5e7eb;
+      color: #98a2b3;
+      font-size: 14px;
+    }
+
+    .input-row img {
+      width: 20px;
+      height: 20px;
+    }
+
+    .wechat-btn,
+    .dark-btn,
+    .light-btn {
+      height: 46px;
+      display: grid;
+      place-items: center;
+      border-radius: 8px;
+      font-size: 15px;
+      font-weight: 900;
+    }
+
+    .wechat-btn {
+      margin-top: 22px;
+      background: #09bb07;
+      color: #fff;
+    }
+
+    .dark-btn {
+      background: #17211f;
+      color: #fff;
+    }
+
+    .light-btn {
+      background: #f2f4f7;
+      color: #344054;
+    }
+
+    .booking-page .section-card,
+    .backpack-page .section-card,
+    .mine-page .section-card,
+    .orders-page .section-card {
+      border-radius: 8px;
+      margin-left: 16px;
+      margin-right: 16px;
+    }
+
+    .summary-card {
+      padding: 18px;
+      border-radius: 8px;
+      color: #fff;
+      background: linear-gradient(135deg, var(--orange), var(--amber));
+    }
+
+    .summary-card h1 {
+      margin: 0;
+      font-size: 22px;
+      line-height: 1.1;
+    }
+
+    .summary-card p {
+      margin: 8px 0 0;
+      font-size: 12px;
+      line-height: 1.45;
+      color: rgba(255,255,255,.86);
+    }
+
+    .person-row,
+    .order-row,
+    .prize-row,
+    .mine-cell {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      padding: 13px 0;
+      border-bottom: 1px solid #edf2f7;
+    }
+
+    .person-row:last-child,
+    .order-row:last-child,
+    .prize-row:last-child,
+    .mine-cell:last-child {
+      border-bottom: 0;
+    }
+
+    .avatar {
+      width: 38px;
+      height: 38px;
+      border-radius: 50%;
+      display: grid;
+      place-items: center;
+      color: #fff;
+      font-size: 15px;
+      font-weight: 900;
+      background: linear-gradient(135deg, #1c384a, #3f6782);
+    }
+
+    .grow {
+      flex: 1;
+      min-width: 0;
+    }
+
+    .line-title {
+      font-size: 14px;
+      font-weight: 850;
+      color: #17211f;
+    }
+
+    .line-sub {
+      margin-top: 3px;
+      color: #667085;
+      font-size: 12px;
+      line-height: 1.35;
+    }
+
+    .ok {
+      color: #0f766e;
+      font-size: 12px;
+      font-weight: 900;
+    }
+
+    .warn {
+      color: #b45309;
+      font-size: 12px;
+      font-weight: 900;
+    }
+
+    .qr-card {
+      height: 124px;
+      display: grid;
+      place-items: center;
+      border-radius: 8px;
+      background: repeating-linear-gradient(45deg, #111827 0 6px, #fff 6px 12px);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .qr-card::after {
+      content: "核销码";
+      display: grid;
+      place-items: center;
+      position: absolute;
+      inset: 26px 122px;
+      background: #fff;
+      color: #111827;
+      font-size: 14px;
+      font-weight: 950;
+      border-radius: 6px;
+    }
+
+    .live-page {
+      background: #f2f6f4;
+    }
+
+    .live-top {
+      height: 96px;
+      background: #fff;
+      border-bottom: 1px solid #e3eae6;
+    }
+
+    .live-map {
+      height: 390px;
+      position: relative;
+      overflow: hidden;
+      background:
+        radial-gradient(circle at 72% 36%, rgba(15,118,110,.17), transparent 20%),
+        linear-gradient(110deg, transparent 0 42%, rgba(255,255,255,.48) 42% 45%, transparent 45%),
+        linear-gradient(40deg, transparent 0 54%, rgba(255,255,255,.5) 54% 57%, transparent 57%),
+        #dcebe5;
+    }
+
+    .map-grid {
+      position: absolute;
+      inset: -40px;
+      background-image:
+        linear-gradient(rgba(15,118,110,.12) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(15,118,110,.12) 1px, transparent 1px);
+      background-size: 34px 34px;
+      transform: rotate(-9deg);
+    }
+
+    .route-svg {
+      position: absolute;
+      inset: 28px 20px 42px;
+      width: 350px;
+      height: 300px;
+    }
+
+    .map-pin {
+      position: absolute;
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      background: #fff;
+      box-shadow: 0 6px 18px rgba(15,23,42,.18);
+      display: grid;
+      place-items: center;
+      font-size: 12px;
+      font-weight: 900;
+      color: #0f766e;
+    }
+
+    .map-pin.active {
+      width: 38px;
+      height: 38px;
+      color: #fff;
+      background: #0f766e;
+      outline: 8px solid rgba(15,118,110,.18);
+    }
+
+    .map-live-card {
+      position: absolute;
+      left: 18px;
+      right: 18px;
+      top: 18px;
+      padding: 14px;
+      border-radius: 8px;
+      background: rgba(255,255,255,.92);
+      backdrop-filter: blur(16px);
+      box-shadow: 0 12px 28px rgba(15,23,42,.12);
+    }
+
+    .live-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: #10b981;
+      box-shadow: 0 0 0 6px rgba(16,185,129,.16);
+    }
+
+    .live-panel {
+      position: absolute;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      height: 425px;
+      padding: 12px 16px 18px;
+      border-radius: 8px 8px 0 0;
+      background: #f7faf8;
+      box-shadow: 0 -18px 40px rgba(15,23,42,.18);
+    }
+
+    .handle {
+      width: 44px;
+      height: 5px;
+      border-radius: 8px;
+      background: #cbd5d1;
+      margin: 0 auto 14px;
+    }
+
+    .checkin-actions {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      gap: 8px;
+      margin: 12px 0;
+    }
+
+    .checkin-actions div {
+      min-height: 42px;
+      border-radius: 8px;
+      display: grid;
+      place-items: center;
+      font-size: 12px;
+      font-weight: 900;
+      background: #fff;
+      color: #17211f;
+    }
+
+    .checkin-actions div:first-child {
+      color: #fff;
+      background: #0f766e;
+    }
+
+    .node {
+      display: grid;
+      grid-template-columns: 30px 1fr;
+      gap: 10px;
+      padding: 11px 0;
+      border-bottom: 1px solid #e3eae6;
+    }
+
+    .node-num {
+      width: 24px;
+      height: 24px;
+      border-radius: 50%;
+      display: grid;
+      place-items: center;
+      color: #fff;
+      background: #98a2b3;
+      font-size: 12px;
+      font-weight: 900;
+    }
+
+    .node.done .node-num {
+      background: #0f766e;
+    }
+
+    .node.active .node-num {
+      background: #b45309;
+    }
+
+    .node h3 {
+      margin: 0 0 4px;
+      font-size: 14px;
+    }
+
+    .node p {
+      margin: 0;
+      color: #65736f;
+      font-size: 11px;
+      line-height: 1.35;
+    }
+
+    .knowledge {
+      margin-top: 8px;
+      padding: 8px 10px;
+      border-radius: 8px;
+      background: #fff7ed;
+      color: #9a3412;
+      font-size: 11px;
+      font-weight: 850;
+    }
+
+    .backpack-page,
+    .settlement-page {
+      background: #f2f6f4;
+    }
+
+    .puzzle-board {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 0;
+      overflow: hidden;
+      border-radius: 8px;
+      background: #dde8e3;
+    }
+
+    .puzzle-board.cols3 {
+      grid-template-columns: repeat(3, 1fr);
+    }
+
+    .piece {
+      aspect-ratio: 1 / 1;
+      background: #eef3f1;
+      display: grid;
+      place-items: center;
+      overflow: hidden;
+    }
+
+    .piece img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .piece.locked {
+      color: #94a3b8;
+      font-weight: 950;
+    }
+
+    .prize-row img {
+      width: 44px;
+      height: 44px;
+      border-radius: 8px;
+      object-fit: cover;
+      background: #eef3f1;
+    }
+
+    .certificate-template {
+      border-radius: 8px;
+      border: 2px solid #c8a45d;
+      background: #fffbf0;
+      padding: 22px 16px;
+      text-align: center;
+    }
+
+    .certificate-template h2 {
+      margin: 12px 0;
+      color: #173532;
+      font-size: 20px;
+    }
+
+    .certificate-template .holder {
+      font-size: 28px;
+      font-weight: 950;
+      color: #0f3f3a;
+    }
+
+    .mine-hero {
+      padding: 56px 20px 20px;
+      background: linear-gradient(135deg, #1c384a, #3f6782);
+      color: #fff;
+    }
+
+    .profile-row {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .profile-row .avatar {
+      width: 58px;
+      height: 58px;
+      background: linear-gradient(135deg, var(--orange), var(--amber));
+      font-size: 22px;
+    }
+
+    .stats-row {
+      margin-top: 18px;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+    }
+
+    .stat-box {
+      padding: 13px;
+      border-radius: 8px;
+      background: rgba(255,255,255,.14);
+    }
+
+    .stat-box b {
+      display: block;
+      font-size: 22px;
+    }
+
+    .stat-box span {
+      font-size: 12px;
+      color: rgba(255,255,255,.78);
+    }
+
+    .mine-cell img {
+      width: 28px;
+      height: 28px;
+      padding: 6px;
+      border-radius: 8px;
+      background: #eef6ff;
+    }
+
+    .mall-header {
+      background: #fff;
+      position: relative;
+      z-index: 2;
+    }
+
+    .mall-grid {
+      padding: 16px 16px 94px;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 14px;
+    }
+
+    .product-card {
+      margin: 0;
+      padding: 10px;
+      border-radius: 8px;
+    }
+
+    .cart-bar {
+      position: absolute;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      height: 72px;
+      background: #fff;
+      border-top: 1px solid #e5e7eb;
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      place-items: center;
+      color: #667085;
+      font-size: 12px;
+      font-weight: 800;
+    }
+
+    .admin-panel {
+      position: absolute;
+      right: 12px;
+      top: 148px;
+      width: 188px;
+      padding: 12px;
+      border-radius: 8px;
+      background: rgba(255,255,255,.94);
+      box-shadow: 0 14px 36px rgba(15,23,42,.18);
+      backdrop-filter: blur(16px);
+    }
+
+    .admin-panel h3 {
+      margin: 0 0 8px;
+      font-size: 14px;
+    }
+
+    .admin-item {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 0;
+      font-size: 12px;
+      font-weight: 850;
+      border-top: 1px solid #edf2f7;
+    }
+
+    .admin-item img {
+      width: 18px;
+      height: 18px;
+    }
+
+    .feedback-box {
+      height: 128px;
+      border-radius: 8px;
+      background: #f8fafc;
+      border: 1px solid #e5e7eb;
+      padding: 12px;
+      color: #98a2b3;
+      font-size: 13px;
+    }
+  </style>
+</head>
+<body>
+  <main class="screen-stage">
+    <section class="capture-screen" data-shot="01-home">
+      <div class="phone-page">
+        <div class="scroll">
+          <div class="hero-home">
+            <div class="media"></div>
+            <div class="status"></div>
+            <div class="vertical-dots"><span></span><span></span><span></span></div>
+            <div class="copy">
+              <h1>正大集团企业研学研习</h1>
+              <p>走进内蒙古正大鸿业食品加工厂，体验现代化食品加工与农食全产业链研习之旅</p>
+            </div>
+          </div>
+          <div class="ticket-card">
+            <div class="ticket-head">
+              <div><div class="status-text">正在进行中</div><div class="date-text">2026年5月10日</div></div>
+              <div><div class="price"><span>¥</span><b>580.00</b><small>/人起</small></div><div class="progress"><i></i></div><div class="hint-text">28/40</div></div>
+            </div>
+            <div class="ticket-grid">
+              <div><img src="../assets/static/project-route.svg" alt="">研学路径</div>
+              <div><img src="../assets/static/project-location.svg" alt="">研学地点</div>
+              <div><img src="../assets/static/project-docs.svg" alt="">详细文档</div>
+              <div><img src="../assets/static/project-contact.svg" alt="">联系方式</div>
+            </div>
+            <div class="primary-pill">进入实时研学</div>
+          </div>
+          <div class="news-card">
+            <div class="row-between"><h2 class="section-title">最新动态</h2><span class="ok">查看更多</span></div>
+            <div class="news-row"><span class="tag">项目动态</span><div class="news-title">正大集团企业研学研习正在进行中</div><div class="news-desc">实时导航、路线打卡与拼图背包已同步开放。</div></div>
+            <div class="news-row"><span class="tag" style="background:#1565c0">合作动态</span><div class="news-title">2026乳业企业研学联盟合作启动</div></div>
+          </div>
+          <div class="news-card">
+            <div class="row-between"><h2 class="section-title">文创商品</h2><span class="ok">查看更多</span></div>
+            <div class="product-mini-grid">
+              <div class="product-mini"><img src="../assets/products/prod_canvas_bag_001.png" alt=""><div class="name">正大研学纪念帆布袋</div><div class="money">¥59.00</div></div>
+              <div class="product-mini"><img src="../assets/products/prod_route_sticker_001.png" alt=""><div class="name">研学路线探索贴纸包</div><div class="money">¥19.90</div></div>
+            </div>
+          </div>
+        </div>
+        <div class="tabbar"><div class="tab active"><img src="../assets/static/tab-home-active.svg" alt="">首页</div><div class="tab"><img src="../assets/static/tab-appointment.svg" alt="">预约</div><div class="tab"><img src="../assets/static/tab-mine.svg" alt="">我的</div></div>
+      </div>
+    </section>
+
+    <section class="capture-screen" data-shot="02-appointment">
+      <div class="phone-page">
+        <div class="appointment-hero"><h1>开启研学之路</h1><p>探索中华文化，开启深度研习之旅</p><div class="search-box"><img src="../assets/static/func-search.svg" alt="">搜索研学项目、地点...</div></div>
+        <div class="category-row"><span class="cat active">全部</span><span class="cat">社会实践</span><span class="cat">自然科学</span><span class="cat">历史文化</span></div>
+        <div class="project-list">
+          <div class="project-card">
+            <div class="project-cover" style="background-image:url('../assets/study-projects/study-project-6-processing-line.png')"><span class="badge">正在进行中</span><span class="price-chip">¥580.00/人起</span></div>
+            <div class="project-body"><span class="tag" style="background:#b45309">动态</span><h2>正大集团企业研学研习</h2><div class="card-desc">走进食品加工厂，完成现代农业、生产线、产品展厅与 DIY 工坊路线任务。</div><div class="progress"><i></i></div><div class="row-between"><span class="hint-text">报名中 28/40</span><span class="ok">进入研学</span></div><div class="tag-row"><span class="soft-tag">企业研学</span><span class="soft-tag">农业科普</span><span class="soft-tag">全产业链</span></div></div>
+          </div>
+          <div class="project-card">
+            <div class="project-cover" style="background:linear-gradient(135deg,#1565c0,#42a5f5)"><span class="badge">可预约</span><span class="price-chip" style="background:#1565c0">¥450.00/人起</span></div>
+            <div class="project-body"><h2>伊利集团企业研学研习</h2><div class="card-desc">探访智慧牧场与乳品工厂，了解从牧场到餐桌的品质管控。</div><div class="tag-row"><span class="soft-tag">智慧牧场</span><span class="soft-tag">品质管控</span></div></div>
+          </div>
+        </div>
+        <div class="tabbar"><div class="tab"><img src="../assets/static/tab-home.svg" alt="">首页</div><div class="tab active"><img src="../assets/static/tab-appointment.svg" alt="">预约</div><div class="tab"><img src="../assets/static/tab-mine.svg" alt="">我的</div></div>
+      </div>
+    </section>
+
+    <section class="capture-screen" data-shot="03-project-detail">
+      <div class="phone-page">
+        <div class="detail-hero"><div class="status"></div><div class="nav dark"><span class="back">‹ 返回</span>研学详情</div><div class="hero-copy"><h1>正大集团企业研学研习</h1><p>体验现代化食品加工与农食全产业链研习之旅</p><div class="price" style="justify-content:flex-start;color:#fff;margin-top:12px"><span>¥</span><b>580.00</b><small style="color:rgba(255,255,255,.85)">/人起</small></div></div></div>
+        <div class="detail-body">
+          <div class="in-progress"><img src="../assets/static/icon-bell.svg" alt=""><div class="grow"><div class="line-title">研学进行中</div><div class="line-sub">已预约成员可进入实时导航，完成现场打卡。</div></div><div class="small-btn">进入研学</div></div>
+          <div class="section-card"><div class="row-between"><h2 class="section-title">研学地点</h2><img src="../assets/static/project-location.svg" style="width:26px" alt=""></div><p class="section-sub">内蒙古正大鸿业食品有限公司食品加工厂</p><div class="primary-pill" style="margin-top:14px;background:#1c384a">查看路线导航</div></div>
+          <div class="section-card"><h2 class="section-title">研学路径</h2>
+            <div style="margin-top:16px">
+              <div class="route-step"><div class="dotline"><b></b><i></i></div><div><h3>接待大厅</h3><p>签到、领取物料、讲解研学须知</p></div></div>
+              <div class="route-step"><div class="dotline"><b></b><i></i></div><div><h3>科普长廊</h3><p>生猪畜牧知识、养殖防疫科普、集章打卡</p></div></div>
+              <div class="route-step"><div class="dotline"><b></b><i></i></div><div><h3>观光生产线</h3><p>观摩全自动肉类分割生产线、生产链特色拼图体验</p></div></div>
+              <div class="route-step"><div class="dotline"><b></b></div><div><h3>DIY工坊</h3><p>手工灌装香肠、熟食品尝、公益餐贴制作</p></div></div>
+            </div>
+          </div>
+        </div>
+        <div class="bottom-bar"><div><div class="pay">¥580.00</div><div class="line-sub">当前报名：28/40人</div></div><div class="action">进入研学</div></div>
+      </div>
+    </section>
+
+    <section class="capture-screen" data-shot="04-login-register">
+      <div class="phone-page" style="background:#eef2f6">
+        <div class="login-hero"><h1>欢迎回到蒙企链探</h1><p>登录后同步预约、订单、积分、拼图与证书。</p></div>
+        <div class="login-panel">
+          <h2 class="section-title">手机号登录</h2>
+          <div class="input-row"><img src="../assets/static/auth-phone.svg" alt="">请输入手机号</div>
+          <div class="input-row"><img src="../assets/static/auth-lock.svg" alt="">请输入验证码或密码</div>
+          <div class="dark-btn" style="margin-top:22px">登录</div>
+          <div class="wechat-btn">微信一键登录</div>
+        </div>
+        <div class="section-card"><h2 class="section-title">完善资料</h2><p class="section-sub">微信授权后补充真实姓名、手机号、学校/单位信息，生成研学号。</p><div class="input-row"><img src="../assets/static/auth-user.svg" alt="">研学用户</div><div class="input-row"><img src="../assets/static/func-idcard.svg" alt="">实名认证信息</div><div class="primary-pill" style="background:#1c384a">保存资料</div></div>
+      </div>
+    </section>
+
+    <section class="capture-screen" data-shot="05-booking-travelers">
+      <div class="phone-page booking-page">
+        <div class="nav"><span class="back">‹ 返回</span>选择游客</div>
+        <div class="content">
+          <div class="summary-card"><h1>提交预约</h1><p>正大集团企业研学研习，内蒙古正大鸿业食品有限公司食品加工厂</p><div class="row-between" style="margin-top:16px"><span>参与人数</span><b>3 人</b></div><div class="row-between"><span>应付金额</span><b>¥1740.00</b></div></div>
+        </div>
+        <div class="section-card"><div class="row-between"><h2 class="section-title">常用游客</h2><span class="ok">添加游客</span></div>
+          <div class="person-row"><div class="avatar">我</div><div class="grow"><div class="line-title">研学用户</div><div class="line-sub">138****8000 · 本人</div></div><span class="ok">已选</span></div>
+          <div class="person-row"><div class="avatar" style="background:#1565c0">李</div><div class="grow"><div class="line-title">李同学</div><div class="line-sub">138****1168 · 同行游客</div></div><span class="ok">已选</span></div>
+          <div class="person-row"><div class="avatar" style="background:#007a33">张</div><div class="grow"><div class="line-title">张老师</div><div class="line-sub">139****5921 · 带队老师</div></div><span class="ok">已选</span></div>
+        </div>
+        <div class="section-card"><h2 class="section-title">预约自动推送</h2><p class="section-sub">提交后生成核销码，并推送集合时间地点、注意事项、课前预习链接。</p></div>
+        <div class="bottom-bar"><div><div class="pay">¥1740.00</div><div class="line-sub">3 位游客</div></div><div class="action">提交预约</div></div>
+      </div>
+    </section>
+
+    <section class="capture-screen" data-shot="06-booking-detail">
+      <div class="phone-page booking-page">
+        <div class="nav"><span class="back">‹ 返回</span>订单详情</div>
+        <div class="content"><div class="summary-card"><div class="row-between"><div><h1>正大集团企业研学研习</h1><p>内蒙古正大鸿业食品有限公司食品加工厂</p></div><span class="tag" style="background:#0f766e">待出行</span></div><div class="row-between" style="margin-top:18px"><span>参与人数</span><b>3 人</b><span>金额</span><b>¥1740.00</b></div></div></div>
+        <div class="section-card"><h2 class="section-title">核销码</h2><p class="section-sub">到达接待大厅后出示给工作人员核销。</p><div class="qr-card"></div></div>
+        <div class="section-card"><div class="row-between"><h2 class="section-title">订单人员</h2><span class="ok">全部通过</span></div>
+          <div class="person-row"><div class="grow"><div class="line-title">研学用户 <span class="soft-tag">发起人</span></div><div class="line-sub">138****8000</div></div><span class="ok">已实名</span></div>
+          <div class="person-row"><div class="grow"><div class="line-title">李同学</div><div class="line-sub">138****1168</div></div><span class="ok">已通过</span></div>
+          <div class="person-row"><div class="grow"><div class="line-title">张老师</div><div class="line-sub">139****5921</div></div><span class="ok">已通过</span></div>
+        </div>
+        <div class="section-card"><h2 class="section-title">集合通知</h2><p class="section-sub">集合时间 08:30，集合地点 接待大厅。请提前完成课前预习并携带身份证件。</p></div>
+      </div>
+    </section>
+
+    <section class="capture-screen" data-shot="07-study-live">
+      <div class="phone-page live-page">
+        <div class="live-top"><div class="status"></div><div class="nav"><span class="back">‹ 返回</span>实时研学导航</div></div>
+        <div class="live-map">
+          <div class="map-grid"></div>
+          <svg class="route-svg" viewBox="0 0 350 300" aria-hidden="true">
+            <path d="M48 238 C90 186, 98 152, 138 132 S212 112, 238 78 S292 60, 318 34" fill="none" stroke="#fff" stroke-width="18" stroke-linecap="round" opacity=".72"/>
+            <path d="M48 238 C90 186, 98 152, 138 132 S212 112, 238 78 S292 60, 318 34" fill="none" stroke="#0f766e" stroke-width="6" stroke-linecap="round" stroke-dasharray="11 11"/>
+          </svg>
+          <div class="map-live-card"><div style="display:flex;align-items:center;gap:10px"><span class="live-dot"></span><span class="line-title">定位中，精度 8m</span></div><div class="line-sub">正大集团企业研学研习 · 当前签到进度</div><div class="row-between" style="margin-top:10px"><span class="ok">3/6 已完成</span><span class="warn">距观光生产线 120m</span></div></div>
+          <div class="map-pin done" style="left:48px;top:258px">1</div>
+          <div class="map-pin done" style="left:126px;top:162px">2</div>
+          <div class="map-pin active" style="left:188px;top:136px">3</div>
+          <div class="map-pin" style="left:244px;top:98px">4</div>
+          <div class="map-pin" style="left:296px;top:58px">5</div>
+        </div>
+        <div class="live-panel">
+          <div class="handle"></div>
+          <div class="row-between"><div><div class="line-sub">当前签到进度</div><h2 class="section-title">观光生产线</h2></div><span class="tag" style="background:#0f766e">3/6</span></div>
+          <div class="checkin-actions"><div>扫一扫打卡</div><div>我的二维码</div><div>研学背包</div></div>
+          <div class="progress"><i style="width:50%;background:#0f766e"></i></div>
+          <div class="node done"><div class="node-num">✓</div><div><h3>接待大厅</h3><p>签到、领取物料、讲解研学须知 · 已打卡</p></div></div>
+          <div class="node done"><div class="node-num">✓</div><div><h3>科普长廊</h3><p>生猪畜牧知识、养殖防疫科普、集章打卡 · 已打卡</p></div></div>
+          <div class="node active"><div class="node-num">3</div><div><h3>观光生产线 <span class="soft-tag">当前</span></h3><p>观摩全自动肉类分割生产线，解锁生产链特色拼图体验。</p><div class="knowledge">知识小助手：观看讲解后答题，答对积星换礼品</div></div></div>
+        </div>
+      </div>
+    </section>
+
+    <section class="capture-screen" data-shot="08-admin-live">
+      <div class="phone-page live-page">
+        <div class="live-top"><div class="status"></div><div class="nav"><span class="back">‹ 返回</span>实时研学导航</div></div>
+        <div class="live-map">
+          <div class="map-grid"></div>
+          <svg class="route-svg" viewBox="0 0 350 300" aria-hidden="true"><path d="M48 238 C90 186, 98 152, 138 132 S212 112, 238 78 S292 60, 318 34" fill="none" stroke="#0f766e" stroke-width="7" stroke-linecap="round"/></svg>
+          <div class="map-live-card"><div style="display:flex;align-items:center;gap:10px"><span class="live-dot"></span><span class="line-title">管理员视角</span></div><div class="line-sub">点位、签到方式、奖品和积分现场控制</div></div>
+          <div class="admin-panel"><h3>管理员工具</h3><div class="admin-item"><img src="../assets/static/icon-shield.svg" alt="">流程控制</div><div class="admin-item"><img src="../assets/static/icon-car.svg" alt="">出发设置</div><div class="admin-item"><img src="../assets/static/icon-users.svg" alt="">学员列表</div><div class="admin-item"><img src="../assets/static/func-search.svg" alt="">学员签到</div><div class="admin-item"><img src="../assets/static/project-route.svg" alt="">点位设置</div><div class="admin-item"><img src="../assets/static/icon-package.svg" alt="">发放奖品</div></div>
+        </div>
+        <div class="live-panel" style="height:380px"><div class="handle"></div><div class="row-between"><div><div class="line-sub">当前进行点位</div><h2 class="section-title">观光生产线</h2></div><span class="tag">进行中</span></div><div class="checkin-actions"><div>流程控制</div><div>学员列表</div><div>发放奖品</div></div><div class="node active"><div class="node-num">3</div><div><h3>点位设置</h3><p>签到方式：扫码 + 范围 120m；知识小助手已开启。</p></div></div><div class="node"><div class="node-num">4</div><div><h3>产品展厅</h3><p>可切换为下一站，并同步更新学员端导航。</p></div></div></div>
+      </div>
+    </section>
+
+    <section class="capture-screen" data-shot="09-study-backpack">
+      <div class="phone-page backpack-page">
+        <div class="nav"><span class="back">‹ 返回</span>研学背包</div>
+        <div class="content"><div class="summary-card"><div class="line-sub" style="color:rgba(255,255,255,.76)">当前研学项目</div><h1>食品加工厂研学拼图</h1><p>正大集团企业研学研习 · 2×3 路线拼图</p><div class="row-between" style="margin-top:14px"><span>4/6 块拼图</span><span>收集中</span></div><div class="progress"><i style="width:66%;background:#fff"></i></div></div></div>
+        <div class="section-card"><div class="row-between"><h2 class="section-title">拼图情况</h2><span class="ok">2×3</span></div><div class="puzzle-board" style="margin-top:14px">
+          <div class="piece"><img src="../assets/static/study-backpack/zhengda-route-piece-1.jpg" alt=""></div><div class="piece"><img src="../assets/static/study-backpack/zhengda-route-piece-2.jpg" alt=""></div><div class="piece"><img src="../assets/static/study-backpack/zhengda-route-piece-3.jpg" alt=""></div><div class="piece locked">4</div><div class="piece"><img src="../assets/static/study-backpack/zhengda-route-piece-5.jpg" alt=""></div><div class="piece locked">6</div>
+        </div></div>
+        <div class="section-card"><div class="row-between"><h2 class="section-title">获得的奖品</h2><span class="ok">2/3</span></div><div class="prize-row"><img src="../assets/products/prod_route_sticker_001.png" alt=""><div class="grow"><div class="line-title">研学路线探索贴纸包</div><div class="line-sub">完成科普长廊打卡获得</div></div><span class="ok">已获得</span></div><div class="prize-row"><img src="../assets/products/prod_canvas_bag_001.png" alt=""><div class="grow"><div class="line-title">正大研学纪念帆布袋</div><div class="line-sub">完成生产线任务获得</div></div><span class="ok">已获得</span></div></div>
+      </div>
+    </section>
+
+    <section class="capture-screen" data-shot="10-study-settlement">
+      <div class="phone-page settlement-page">
+        <div class="nav"><span class="back">‹ 返回</span>研学结算</div>
+        <div class="content"><div class="summary-card"><div class="line-sub" style="color:rgba(255,255,255,.76)">研学已结束</div><h1>正大集团企业研学研习</h1><p>拼图 6/6 · 奖品 3 件 · 证书已生成</p></div></div>
+        <div class="section-card"><div class="row-between"><h2 class="section-title">完整拼图</h2><span class="ok">已集齐</span></div><div class="puzzle-board" style="margin-top:14px">
+          <div class="piece"><img src="../assets/static/study-backpack/zhengda-route-piece-1.jpg" alt=""></div><div class="piece"><img src="../assets/static/study-backpack/zhengda-route-piece-2.jpg" alt=""></div><div class="piece"><img src="../assets/static/study-backpack/zhengda-route-piece-3.jpg" alt=""></div><div class="piece"><img src="../assets/static/study-backpack/zhengda-route-piece-4.jpg" alt=""></div><div class="piece"><img src="../assets/static/study-backpack/zhengda-route-piece-5.jpg" alt=""></div><div class="piece"><img src="../assets/static/study-backpack/zhengda-route-piece-6.jpg" alt=""></div>
+        </div></div>
+        <div class="section-card"><div class="row-between"><h2 class="section-title">研学证书</h2><span class="ok">已获得</span></div><div class="certificate-template" style="margin-top:14px"><span class="tag">研学电子证书</span><h2>正大集团企业研学研习</h2><div class="holder">研学用户</div><p class="section-sub">已完成本项目规定研学任务，特发此证。</p><div class="ok">证书编号：MQYX-2026-0606-001</div></div><div class="primary-pill" style="background:#0f766e">下载证书</div></div>
+      </div>
+    </section>
+
+    <section class="capture-screen" data-shot="11-my-appointments">
+      <div class="phone-page orders-page">
+        <div class="nav"><span class="back">‹ 返回</span>我的研学</div>
+        <div class="category-row"><span class="cat active">全部</span><span class="cat">待出行</span><span class="cat">进行中</span><span class="cat">已完成</span></div>
+        <div class="section-card"><h2 class="section-title">进行中的研学</h2><div class="order-row"><div class="grow"><div class="line-title">正大集团企业研学研习</div><div class="line-sub">今天 08:30 · 接待大厅集合 · 3 位游客</div></div><span class="tag">进行中</span></div><div class="primary-pill">进入实时导航</div></div>
+        <div class="section-card"><h2 class="section-title">预约记录</h2><div class="order-row"><div class="grow"><div class="line-title">伊利集团企业研学研习</div><div class="line-sub">2026年7月20日 · 呼和浩特 · 伊利智慧牧场</div></div><span class="ok">待出行</span></div><div class="order-row"><div class="grow"><div class="line-title">蒙牛集团企业研学研习</div><div class="line-sub">名额已满，可关注后续批次</div></div><span class="warn">预约满员</span></div></div>
+      </div>
+    </section>
+
+    <section class="capture-screen" data-shot="12-my-puzzle">
+      <div class="phone-page">
+        <div class="nav"><span class="back">‹ 返回</span>我的成果/拼图</div>
+        <div class="content"><div class="white-card" style="margin:0"><h2 class="section-title">研学项目成果</h2><p class="section-sub">项目拼图与结业证书会同步保存在这里。</p><div class="progress"><i style="width:25%;background:#1c384a"></i></div><div class="ok" style="margin-top:8px">累计已结业 1/4 个项目</div></div></div>
+        <div class="section-card" style="overflow:hidden;padding:0"><div class="summary-card" style="border-radius:0"><div class="row-between"><div><h1>正大集团企业研学研习</h1><p>2×3 · 6 块拼图</p></div><b>6/6</b></div></div><div style="padding:14px"><div class="puzzle-board" style="width:185px">
+          <div class="piece"><img src="../assets/static/study-backpack/zhengda-route-piece-1.jpg" alt=""></div><div class="piece"><img src="../assets/static/study-backpack/zhengda-route-piece-2.jpg" alt=""></div><div class="piece"><img src="../assets/static/study-backpack/zhengda-route-piece-3.jpg" alt=""></div><div class="piece"><img src="../assets/static/study-backpack/zhengda-route-piece-4.jpg" alt=""></div><div class="piece"><img src="../assets/static/study-backpack/zhengda-route-piece-5.jpg" alt=""></div><div class="piece"><img src="../assets/static/study-backpack/zhengda-route-piece-6.jpg" alt=""></div>
+        </div><div class="certificate-template" style="margin-top:12px;text-align:left"><div class="line-title">研学结业证书</div><div class="line-sub">编号：MQYX-2026-0606-001 · 颁发日期：2026-06-06</div></div></div></div>
+        <div class="section-card"><h2 class="section-title">如何获得拼图？</h2><p class="section-sub">到达车间点位后扫码打卡，完成知识问答，拼图块会自动存入研学背包。</p></div>
+      </div>
+    </section>
+
+    <section class="capture-screen" data-shot="13-mall">
+      <div class="phone-page">
+        <div class="mall-header"><div class="nav"><span class="back">‹ 返回</span>文创商城</div><div style="padding:0 16px 12px"><div class="search-box" style="margin-top:0;background:#f2f4f7"><img src="../assets/static/func-search.svg" alt="">搜索文创周边...</div></div><div class="category-row" style="box-shadow:none"><span class="cat active">全部</span><span class="cat">服饰配件</span><span class="cat">文具礼品</span><span class="cat">精选书籍</span></div></div>
+        <div class="mall-grid">
+          <div class="product-card"><img src="../assets/products/prod_canvas_bag_001.png" alt=""><div class="name">正大研学纪念帆布袋</div><div class="money">¥59.00</div><span class="soft-tag">可积分抵扣</span></div>
+          <div class="product-card"><img src="../assets/products/prod_study_cup_001.png" alt=""><div class="name">蒙牛营养研学马克杯</div><div class="money">¥49.00</div><span class="soft-tag">490积分</span></div>
+          <div class="product-card"><img src="../assets/products/prod_route_sticker_001.png" alt=""><div class="name">研学路线探索贴纸包</div><div class="money">¥19.90</div><span class="soft-tag">热销</span></div>
+          <div class="product-card"><img src="../assets/products/mall-merchandise-hero.png" alt=""><div class="name">现代农业科普手册</div><div class="money">¥35.00</div><span class="soft-tag">精选书籍</span></div>
+        </div>
+        <div class="cart-bar"><div>首页</div><div>购物车 · 2</div><div>我的订单</div></div>
+      </div>
+    </section>
+
+    <section class="capture-screen" data-shot="14-product-order">
+      <div class="phone-page">
+        <div class="nav"><span class="back">‹ 返回</span>商品详情</div>
+        <div style="height:360px;background:#fff;display:grid;place-items:center"><img src="../assets/products/prod_canvas_bag_001.png" alt="" style="width:300px;height:300px;object-fit:cover;border-radius:8px"></div>
+        <div class="section-card"><div class="row-between"><div><h2 class="section-title">正大研学纪念帆布袋</h2><p class="section-sub">MQ-WC-BAG-001 · 服饰配件</p></div><div class="price"><span>¥</span><b>59.00</b></div></div><div class="tag-row"><span class="soft-tag">可积分抵扣</span><span class="soft-tag">库存 200</span><span class="soft-tag">销量 36</span></div></div>
+        <div class="section-card"><h2 class="section-title">确认订单</h2><div class="order-row"><div class="grow"><div class="line-title">收货地址</div><div class="line-sub">内蒙古自治区呼和浩特市 · 研学用户 138****8000</div></div><span>›</span></div><div class="order-row"><div class="grow"><div class="line-title">积分抵扣</div><div class="line-sub">可用 590 积分抵扣部分金额</div></div><span class="ok">已开启</span></div></div>
+        <div class="bottom-bar"><div><div class="pay">¥59.00</div><div class="line-sub">含文创商品 1 件</div></div><div class="action">提交订单</div></div>
+      </div>
+    </section>
+
+    <section class="capture-screen" data-shot="15-mine">
+      <div class="phone-page mine-page">
+        <div class="mine-hero"><div class="profile-row"><div class="avatar">游</div><div><h2 style="margin:0;font-size:22px">研学用户</h2><div style="font-size:13px;color:rgba(255,255,255,.78);margin-top:4px">研学号: YX888888</div></div></div><div class="stats-row"><div class="stat-box"><b>1280</b><span>我的积分</span></div><div class="stat-box"><b>1</b><span>我的成果/拼图</span></div></div></div>
+        <div class="section-card"><div class="mine-cell"><img src="../assets/static/mine-appointment.svg" alt=""><div class="grow"><div class="line-title">我的研学</div><div class="line-sub">预约、核销码、实时导航入口</div></div><span>›</span></div></div>
+        <div class="section-card"><h2 class="section-title">我的订单</h2><div class="ticket-grid" style="grid-template-columns:repeat(5,1fr)"><div><img src="../assets/static/order-unpaid.svg" alt="">待付款</div><div><img src="../assets/static/order-unreceived.svg" alt="">待发货</div><div><img src="../assets/static/order-unused.svg" alt="">待使用</div><div><img src="../assets/static/order-completed.svg" alt="">已完成</div><div><img src="../assets/static/order-review.svg" alt="">待评价</div></div></div>
+        <div class="section-card"><div class="mine-cell"><img src="../assets/static/mine-travelers.svg" alt=""><div class="grow"><div class="line-title">常用游客</div></div><span>›</span></div><div class="mine-cell"><img src="../assets/static/mine-invoice.svg" alt=""><div class="grow"><div class="line-title">电子发票</div></div><span>›</span></div><div class="mine-cell"><img src="../assets/static/mine-feedback.svg" alt=""><div class="grow"><div class="line-title">反馈与建议</div></div><span>›</span></div><div class="mine-cell"><img src="../assets/static/mine-customer.svg" alt=""><div class="grow"><div class="line-title">联系客服</div></div><span>›</span></div><div class="mine-cell"><img src="../assets/static/mine-settings.svg" alt=""><div class="grow"><div class="line-title">设置</div></div><span>›</span></div></div>
+        <div class="tabbar"><div class="tab"><img src="../assets/static/tab-home.svg" alt="">首页</div><div class="tab"><img src="../assets/static/tab-appointment.svg" alt="">预约</div><div class="tab active"><img src="../assets/static/tab-mine-active.svg" alt="">我的</div></div>
+      </div>
+    </section>
+
+    <section class="capture-screen" data-shot="16-services">
+      <div class="phone-page">
+        <div class="nav"><span class="back">‹ 返回</span>服务与设置</div>
+        <div class="content"><div class="summary-card" style="background:linear-gradient(135deg,#152e3d,#3f6782)"><h1>反馈与客服</h1><p>小程序支持意见反馈、客服联系方式、电子发票、地址与安全设置。</p></div></div>
+        <div class="section-card"><h2 class="section-title">反馈与建议</h2><div class="feedback-box">请描述研学体验、路线问题或系统建议...</div><div class="primary-pill" style="background:#1c384a">提交反馈</div></div>
+        <div class="section-card"><h2 class="section-title">联系客服</h2><div class="mine-cell"><img src="../assets/static/service-phone.svg" alt=""><div class="grow"><div class="line-title">官方热线</div><div class="line-sub">400-888-2026</div></div></div><div class="mine-cell"><img src="../assets/static/service-wechat.svg" alt=""><div class="grow"><div class="line-title">客服微信</div><div class="line-sub">mqlt-study</div></div></div><div class="mine-cell"><img src="../assets/static/service-email.svg" alt=""><div class="grow"><div class="line-title">邮箱支持</div><div class="line-sub">service@mqlt.local</div></div></div></div>
+        <div class="section-card"><h2 class="section-title">设置</h2><div class="mine-cell"><div class="grow"><div class="line-title">个人信息</div></div><span>›</span></div><div class="mine-cell"><div class="grow"><div class="line-title">修改密码</div></div><span>›</span></div><div class="mine-cell"><div class="grow"><div class="line-title">用户协议与隐私政策</div></div><span>›</span></div></div>
+      </div>
+    </section>
+  </main>
+</body>
+</html>

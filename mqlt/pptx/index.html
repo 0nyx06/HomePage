@@ -1,0 +1,1999 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="color-scheme" content="dark" />
+  <title>蒙企链探小程序展示</title>
+  <style>
+    :root {
+      --black: #000;
+      --white: #fff;
+      --ink: #f5f5f7;
+      --muted: rgba(245, 245, 247, .68);
+      --muted-strong: rgba(245, 245, 247, .84);
+      --blue: #0071e3;
+      --blue-bright: #2997ff;
+      --teal: #00c7be;
+      --gold: #f5c451;
+      --line: rgba(255,255,255,.14);
+      --ease: cubic-bezier(.16, 1, .3, 1);
+      --ease-soft: cubic-bezier(.22, 1, .36, 1);
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text", "PingFang SC", "Microsoft YaHei UI", sans-serif;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html,
+    body {
+      width: 100%;
+      height: 100%;
+      margin: 0;
+      overflow: hidden;
+      background: #000;
+      color: var(--white);
+      font-family: inherit;
+    }
+
+    button,
+    a {
+      font: inherit;
+    }
+
+    button {
+      cursor: pointer;
+    }
+
+    img {
+      display: block;
+      max-width: 100%;
+    }
+
+    a {
+      color: inherit;
+      text-decoration: none;
+    }
+
+    #stage-canvas {
+      position: fixed;
+      inset: 0;
+      z-index: 0;
+      width: 100%;
+      height: 100%;
+      background: #000;
+    }
+
+    .ambient {
+      position: fixed;
+      inset: 0;
+      z-index: 1;
+      pointer-events: none;
+      background:
+        radial-gradient(ellipse at 50% 6%, rgba(255,255,255,.22), transparent 28%),
+        radial-gradient(ellipse at 72% 46%, rgba(41,151,255,.18), transparent 30%),
+        radial-gradient(ellipse at 22% 70%, rgba(0,199,190,.12), transparent 26%),
+        linear-gradient(180deg, rgba(0,0,0,0), #000 78%);
+    }
+
+    .ambient::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background:
+        linear-gradient(90deg, transparent, rgba(255,255,255,.08), transparent),
+        linear-gradient(180deg, rgba(255,255,255,.08), transparent 28%);
+      opacity: .4;
+      mask-image: radial-gradient(ellipse at center, #000 0 42%, transparent 72%);
+    }
+
+    .deck {
+      position: fixed;
+      inset: 0;
+      z-index: 2;
+      overflow: hidden;
+      background: transparent;
+      user-select: none;
+    }
+
+    .slide {
+      position: absolute;
+      inset: 0;
+      opacity: 0;
+      pointer-events: none;
+      transform: translateY(18px) scale(.985);
+      filter: blur(10px);
+      transition: opacity 620ms var(--ease), transform 760ms var(--ease), filter 760ms var(--ease);
+      display: grid;
+      place-items: center;
+      padding: clamp(68px, 8vh, 96px) clamp(20px, 5vw, 76px) clamp(88px, 10vh, 116px);
+    }
+
+    .slide.is-active {
+      opacity: 1;
+      transform: none;
+      filter: none;
+      pointer-events: auto;
+    }
+
+    .slide-content {
+      width: min(1200px, 100%);
+      min-height: 0;
+      position: relative;
+    }
+
+    .topbar {
+      position: fixed;
+      left: 0;
+      right: 0;
+      top: 0;
+      height: 48px;
+      z-index: 10;
+      display: flex;
+      justify-content: center;
+      background: rgba(0,0,0,.62);
+      border-bottom: 1px solid rgba(255,255,255,.08);
+      backdrop-filter: saturate(180%) blur(18px);
+    }
+
+    .topbar-inner {
+      width: min(1180px, calc(100vw - 28px));
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      color: rgba(255,255,255,.76);
+      font-size: 12px;
+    }
+
+    .brand {
+      display: inline-flex;
+      align-items: center;
+      gap: 9px;
+      font-weight: 600;
+    }
+
+    .brand-dot {
+      width: 15px;
+      height: 15px;
+      border-radius: 50%;
+      background: #fff;
+      box-shadow: 0 0 24px rgba(41,151,255,.72), 0 0 48px rgba(0,199,190,.28);
+    }
+
+    .top-actions {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .top-actions button {
+      min-height: 30px;
+      color: rgba(255,255,255,.72);
+      background: transparent;
+      border: 0;
+      padding: 0 4px;
+      border-radius: 6px;
+    }
+
+    .top-actions button:hover,
+    .top-actions button:focus-visible {
+      color: #fff;
+      outline: 1px solid rgba(255,255,255,.26);
+      outline-offset: 3px;
+    }
+
+    .progress {
+      position: fixed;
+      left: 0;
+      right: 0;
+      top: 48px;
+      height: 2px;
+      z-index: 12;
+      background: rgba(255,255,255,.08);
+    }
+
+    .progress-fill {
+      height: 100%;
+      width: 100%;
+      transform-origin: 0 50%;
+      transform: scaleX(0);
+      background: linear-gradient(90deg, var(--blue-bright), var(--teal));
+      transition: transform 420ms var(--ease);
+    }
+
+    .controls {
+      position: fixed;
+      left: 50%;
+      bottom: 18px;
+      z-index: 11;
+      transform: translateX(-50%);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px;
+      border-radius: 980px;
+      background: rgba(28,28,30,.76);
+      border: 1px solid rgba(255,255,255,.12);
+      backdrop-filter: blur(22px) saturate(160%);
+      box-shadow: 0 18px 54px rgba(0,0,0,.52);
+    }
+
+    .control-btn {
+      min-width: 42px;
+      height: 38px;
+      padding: 0 13px;
+      border: 0;
+      border-radius: 980px;
+      background: transparent;
+      color: rgba(255,255,255,.84);
+      display: inline-grid;
+      place-items: center;
+      font-weight: 600;
+      white-space: nowrap;
+      transition: background 180ms var(--ease-soft), color 180ms var(--ease-soft), transform 180ms var(--ease-soft);
+    }
+
+    .control-btn:hover,
+    .control-btn:focus-visible {
+      background: rgba(255,255,255,.12);
+      color: #fff;
+      outline: none;
+    }
+
+    .control-btn:active {
+      transform: scale(.96);
+    }
+
+    .control-btn.primary {
+      min-width: 76px;
+      background: var(--blue);
+      color: #fff;
+    }
+
+    .counter {
+      min-width: 56px;
+      text-align: center;
+      color: rgba(255,255,255,.72);
+      font-size: 13px;
+    }
+
+    .start-gate {
+      position: fixed;
+      inset: 0;
+      z-index: 20;
+      display: grid;
+      place-items: center;
+      padding: 24px;
+      background:
+        radial-gradient(circle at 50% 34%, rgba(255,255,255,.2), transparent 24%),
+        rgba(0,0,0,.78);
+      backdrop-filter: blur(10px);
+      transition: opacity 520ms var(--ease), visibility 520ms var(--ease);
+    }
+
+    .start-gate.is-hidden {
+      opacity: 0;
+      visibility: hidden;
+      pointer-events: none;
+    }
+
+    .start-panel {
+      width: min(780px, 100%);
+      text-align: center;
+    }
+
+    .start-panel h1 {
+      margin: 0;
+      font-size: clamp(3.1rem, 8vw, 5.9rem);
+      line-height: 1.04;
+      letter-spacing: -0.035em;
+      font-weight: 700;
+      text-wrap: balance;
+    }
+
+    .start-btn {
+      margin-top: 32px;
+      min-height: 54px;
+      padding: 0 30px;
+      border: 0;
+      border-radius: 980px;
+      color: #fff;
+      background: var(--blue);
+      font-size: 18px;
+      transition: transform 220ms var(--ease-soft), background 220ms var(--ease-soft), box-shadow 220ms var(--ease-soft);
+      box-shadow: 0 16px 38px rgba(0,113,227,.35);
+    }
+
+    .start-btn:hover,
+    .start-btn:focus-visible {
+      background: #147ce5;
+      transform: translateY(-1px);
+      outline: none;
+      box-shadow: 0 18px 46px rgba(0,113,227,.48);
+    }
+
+    h1,
+    h2,
+    h3,
+    p {
+      margin: 0;
+    }
+
+    .eyebrow {
+      margin-bottom: 18px;
+      color: var(--blue-bright);
+      font-size: clamp(1rem, 1.55vw, 1.2rem);
+      line-height: 1.35;
+      font-weight: 520;
+    }
+
+    .title-xl {
+      font-size: clamp(3.2rem, 8vw, 6rem);
+      line-height: 1.04;
+      letter-spacing: -0.035em;
+      font-weight: 720;
+      text-wrap: balance;
+    }
+
+    .title-lg {
+      font-size: clamp(2.65rem, 5.9vw, 5.05rem);
+      line-height: 1.06;
+      letter-spacing: -0.035em;
+      font-weight: 720;
+      text-wrap: balance;
+    }
+
+    .lead {
+      margin-top: 22px;
+      max-width: 680px;
+      color: var(--muted);
+      font-size: clamp(1.08rem, 1.85vw, 1.34rem);
+      line-height: 1.48;
+      text-wrap: pretty;
+    }
+
+    .center {
+      text-align: center;
+      margin-left: auto;
+      margin-right: auto;
+    }
+
+    .center .lead {
+      margin-left: auto;
+      margin-right: auto;
+    }
+
+    .cover-stage,
+    .split-stage,
+    .live-stage,
+    .wide-stage,
+    .closing-stage {
+      display: grid;
+      align-items: center;
+      gap: clamp(24px, 5vw, 72px);
+    }
+
+    .cover-stage {
+      grid-template-columns: minmax(0, 1fr) minmax(360px, 440px);
+    }
+
+    .split-stage {
+      grid-template-columns: minmax(0, .92fr) minmax(390px, 1.08fr);
+    }
+
+    .split-stage.reverse {
+      grid-template-columns: minmax(390px, 1.08fr) minmax(0, .92fr);
+    }
+
+    .live-stage {
+      grid-template-columns: minmax(0, 1fr) minmax(330px, 390px);
+    }
+
+    .wide-stage {
+      grid-template-columns: minmax(0, .72fr) minmax(500px, 1.28fr);
+    }
+
+    .closing-stage {
+      grid-template-columns: minmax(0, .95fr) minmax(360px, 1.05fr);
+    }
+
+    .phone {
+      width: min(340px, 78vw);
+      padding: 10px;
+      border-radius: 44px;
+      background: linear-gradient(145deg, #444448, #08080a 38%, #2c2c30);
+      box-shadow:
+        inset 0 0 0 1px rgba(255,255,255,.18),
+        0 34px 74px rgba(0,0,0,.72);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .phone::before {
+      content: "";
+      position: absolute;
+      inset: 11px;
+      border-radius: 33px;
+      box-shadow: inset 0 0 26px rgba(255,255,255,.08);
+      pointer-events: none;
+      z-index: 3;
+    }
+
+    .phone-screen {
+      position: relative;
+      overflow: hidden;
+      border-radius: 34px;
+      background: #111;
+      aspect-ratio: 390 / 844;
+    }
+
+    .phone-screen img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .phone-screen::before {
+      content: "";
+      position: absolute;
+      top: 9px;
+      left: 50%;
+      width: 88px;
+      height: 25px;
+      border-radius: 20px;
+      transform: translateX(-50%);
+      background: rgba(0,0,0,.9);
+      z-index: 2;
+    }
+
+    .phone-screen::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(112deg, rgba(255,255,255,.24), transparent 22%, transparent 62%, rgba(255,255,255,.08));
+      mix-blend-mode: screen;
+      pointer-events: none;
+    }
+
+    .hero-cluster {
+      min-height: min(70vh, 660px);
+      position: relative;
+      perspective: 1300px;
+    }
+
+    .hero-cluster .phone {
+      position: absolute;
+      left: 50%;
+      top: 50%;
+      transform-style: preserve-3d;
+    }
+
+    .phone-main {
+      transform: translate(-50%, -50%) rotateY(-12deg) rotateX(5deg);
+      z-index: 3;
+    }
+
+    .phone-left {
+      transform: translate(-95%, -41%) rotateY(-24deg) rotateZ(-7deg) scale(.82);
+      opacity: .58;
+      z-index: 2;
+    }
+
+    .phone-right {
+      transform: translate(-6%, -38%) rotateY(18deg) rotateZ(7deg) scale(.8);
+      opacity: .66;
+      z-index: 1;
+    }
+
+    .slide.is-active .phone-main {
+      animation: floatMain 5.2s var(--ease-soft) infinite alternate;
+    }
+
+    .phone-stage {
+      width: min(100%, 690px);
+      min-height: min(62vh, 600px);
+      margin: 0 auto;
+      position: relative;
+      display: grid;
+      place-items: center;
+      perspective: 1300px;
+      isolation: isolate;
+    }
+
+    .phone-stage::before {
+      content: "";
+      position: absolute;
+      left: 4%;
+      right: 4%;
+      bottom: 5%;
+      height: 22%;
+      background: radial-gradient(ellipse at center, rgba(41,151,255,.24), transparent 68%);
+      filter: blur(18px);
+      z-index: -1;
+    }
+
+    .phone-stage .phone {
+      position: absolute;
+      width: clamp(190px, 18vw, 268px);
+      opacity: 0;
+      transform: translateY(26px) scale(.98);
+    }
+
+    .phone-stage.two .phone:nth-child(1) {
+      left: 12%;
+      top: 50%;
+      transform: translateY(-44%) rotateY(-13deg) rotateZ(-3deg);
+    }
+
+    .phone-stage.two .phone:nth-child(2) {
+      right: 12%;
+      top: 50%;
+      transform: translateY(-52%) rotateY(13deg) rotateZ(3deg);
+    }
+
+    .phone-stage.trio .phone:nth-child(1) {
+      left: 2%;
+      top: 53%;
+      transform: translateY(-48%) rotateY(-18deg) rotateZ(-5deg) scale(.9);
+      opacity: .74;
+    }
+
+    .phone-stage.trio .phone:nth-child(2) {
+      left: 50%;
+      top: 47%;
+      transform: translate(-50%, -50%) scale(1.06);
+      z-index: 3;
+    }
+
+    .phone-stage.trio .phone:nth-child(3) {
+      right: 2%;
+      top: 53%;
+      transform: translateY(-48%) rotateY(18deg) rotateZ(5deg) scale(.9);
+      opacity: .78;
+    }
+
+    .phone-stage.dual-focus .phone:nth-child(1) {
+      left: 8%;
+      top: 50%;
+      width: clamp(205px, 19vw, 282px);
+      transform: translateY(-52%) rotateY(-14deg) rotateZ(-3deg);
+      z-index: 2;
+    }
+
+    .phone-stage.dual-focus .phone:nth-child(2) {
+      right: 8%;
+      top: 49%;
+      width: clamp(205px, 19vw, 282px);
+      transform: translateY(-48%) rotateY(13deg) rotateZ(3deg);
+      z-index: 1;
+    }
+
+    .slide.is-active .phone-stage .phone {
+      animation: revealPhone 850ms var(--ease) forwards;
+      animation-delay: calc(var(--i) * 120ms + 120ms);
+    }
+
+    .tag-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-top: 26px;
+      max-width: 700px;
+    }
+
+    .tag {
+      min-height: 38px;
+      display: inline-flex;
+      align-items: center;
+      padding: 0 14px;
+      border-radius: 980px;
+      background: rgba(255,255,255,.09);
+      color: rgba(245,245,247,.84);
+      font-size: 14px;
+      line-height: 1;
+      opacity: 0;
+      transform: translateY(12px);
+    }
+
+    .slide.is-active .tag {
+      animation: fadeUp 620ms var(--ease) forwards;
+      animation-delay: calc(var(--i) * 70ms + 220ms);
+    }
+
+    .module-grid {
+      margin-top: 48px;
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 10px;
+    }
+
+    .module {
+      min-height: 158px;
+      padding: 18px;
+      border-radius: 8px;
+      background: #f5f5f7;
+      color: #1d1d1f;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      opacity: 0;
+      transform: translateY(18px);
+    }
+
+    .module.primary {
+      background: #101012;
+      color: #fff;
+      box-shadow: inset 0 0 0 1px rgba(255,255,255,.14);
+    }
+
+    .module b {
+      font-size: 19px;
+      line-height: 1.16;
+    }
+
+    .module span {
+      color: rgba(29,29,31,.66);
+      font-size: 13px;
+      line-height: 1.35;
+    }
+
+    .module.primary span {
+      color: rgba(245,245,247,.68);
+    }
+
+    .slide.is-active .module {
+      animation: riseIn 720ms var(--ease) forwards;
+      animation-delay: calc(var(--i) * 90ms + 180ms);
+    }
+
+    .live-map {
+      margin-top: 30px;
+      height: min(38vh, 330px);
+      min-height: 260px;
+      position: relative;
+      overflow: hidden;
+      border-radius: 8px;
+      background:
+        linear-gradient(110deg, transparent 0 42%, rgba(255,255,255,.72) 42% 45%, transparent 45%),
+        linear-gradient(40deg, transparent 0 54%, rgba(255,255,255,.72) 54% 57%, transparent 57%),
+        #dcebe5;
+      box-shadow: 0 28px 70px rgba(0,0,0,.32);
+    }
+
+    .live-map::before {
+      content: "";
+      position: absolute;
+      inset: -50px;
+      background-image:
+        linear-gradient(rgba(15,118,110,.13) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(15,118,110,.13) 1px, transparent 1px);
+      background-size: 34px 34px;
+      transform: rotate(-9deg);
+    }
+
+    .route-svg {
+      position: absolute;
+      inset: 38px 36px 42px;
+      width: calc(100% - 72px);
+      height: calc(100% - 80px);
+    }
+
+    .route-base {
+      stroke: rgba(255,255,255,.78);
+      stroke-width: 18;
+      fill: none;
+      stroke-linecap: round;
+    }
+
+    .route-motion {
+      stroke: #0f766e;
+      stroke-width: 6;
+      fill: none;
+      stroke-linecap: round;
+      stroke-dasharray: 13 13;
+      animation: dashMove 1.25s linear infinite;
+    }
+
+    .pin {
+      position: absolute;
+      width: 34px;
+      height: 34px;
+      border-radius: 50%;
+      display: grid;
+      place-items: center;
+      color: #0f766e;
+      background: #fff;
+      font-weight: 800;
+      box-shadow: 0 8px 22px rgba(15,23,42,.18);
+    }
+
+    .pin.active {
+      width: 46px;
+      height: 46px;
+      color: #fff;
+      background: #0f766e;
+      outline: 12px solid rgba(15,118,110,.18);
+    }
+
+    .live-phone {
+      width: min(390px, 74vw);
+      margin: 0 auto;
+    }
+
+    .slide.is-active .live-phone {
+      animation: heroLift 900ms var(--ease) both 140ms;
+    }
+
+    .screen-ribbon {
+      margin-top: 44px;
+      height: min(43vh, 380px);
+      min-height: 285px;
+      position: relative;
+      overflow: hidden;
+      display: grid;
+      grid-template-columns: repeat(8, minmax(0, 1fr));
+      grid-template-rows: repeat(2, minmax(0, 1fr));
+      gap: 12px;
+      align-items: start;
+      mask-image: linear-gradient(90deg, transparent, #000 4%, #000 96%, transparent);
+    }
+
+    .ribbon-track {
+      display: contents;
+    }
+
+    .ribbon-item {
+      border-radius: 8px;
+      overflow: hidden;
+      background: #101012;
+      box-shadow: 0 18px 42px rgba(0,0,0,.48);
+      opacity: 0;
+      transform: translateY(18px) scale(.98);
+      height: 100%;
+    }
+
+    .ribbon-item:nth-child(2n) {
+      --lift: 8px;
+      transform: translateY(8px) scale(.98);
+    }
+
+    .ribbon-item img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      object-position: top center;
+    }
+
+    .slide.is-active .ribbon-item {
+      animation: ribbonRise 820ms var(--ease) forwards;
+      animation-delay: calc((var(--ri, 0)) * 45ms + 120ms);
+    }
+
+    .desktop-showcase {
+      position: relative;
+      min-height: min(62vh, 590px);
+      display: grid;
+      place-items: center;
+      perspective: 1400px;
+      isolation: isolate;
+    }
+
+    .desktop-showcase::before {
+      content: "";
+      position: absolute;
+      inset: 14% 4% 2%;
+      background: radial-gradient(ellipse at center, rgba(41,151,255,.24), transparent 68%);
+      filter: blur(24px);
+      z-index: -1;
+    }
+
+    .desktop-frame {
+      width: min(780px, 100%);
+      padding: 10px;
+      border-radius: 16px;
+      background: linear-gradient(145deg, rgba(255,255,255,.24), rgba(255,255,255,.06) 36%, rgba(0,0,0,.72));
+      box-shadow: inset 0 0 0 1px rgba(255,255,255,.16), 0 34px 74px rgba(0,0,0,.64);
+      overflow: hidden;
+      opacity: 0;
+      transform: translateY(30px) rotateX(4deg) scale(.97);
+    }
+
+    .desktop-frame.secondary {
+      position: absolute;
+      width: min(440px, 48%);
+      right: -2%;
+      bottom: 5%;
+      z-index: 2;
+      transform: translateY(34px) rotateY(-15deg) rotateZ(2deg) scale(.92);
+    }
+
+    .desktop-screen {
+      position: relative;
+      overflow: hidden;
+      border-radius: 10px;
+      background: #111;
+      aspect-ratio: 16 / 10;
+    }
+
+    .desktop-screen img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      object-position: top center;
+    }
+
+    .desktop-screen::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(116deg, rgba(255,255,255,.18), transparent 28%, transparent 70%, rgba(255,255,255,.08));
+      mix-blend-mode: screen;
+      pointer-events: none;
+    }
+
+    .slide.is-active .desktop-frame {
+      animation: desktopReveal 900ms var(--ease) forwards;
+      animation-delay: calc(var(--i, 0) * 140ms + 120ms);
+    }
+
+    .closing-wall {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(130px, 1fr));
+      gap: 14px;
+    }
+
+    .closing-wall img {
+      border-radius: 8px;
+      box-shadow: 0 22px 60px rgba(0,0,0,.5);
+    }
+
+    .links {
+      margin-top: 30px;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 14px;
+    }
+
+    .pill {
+      min-height: 44px;
+      padding: 0 21px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 980px;
+      color: #fff;
+      background: var(--blue);
+      font-size: 17px;
+    }
+
+    .slide.is-active .title-xl,
+    .slide.is-active .title-lg,
+    .slide.is-active .eyebrow,
+    .slide.is-active .lead,
+    .slide.is-active .links {
+      animation: fadeUp 760ms var(--ease) both;
+    }
+
+    .slide.is-active .lead {
+      animation-delay: 120ms;
+    }
+
+    .slide.is-active .links {
+      animation-delay: 220ms;
+    }
+
+    @keyframes fadeUp {
+      from {
+        opacity: 0;
+        transform: translateY(18px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    @keyframes riseIn {
+      to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+      }
+    }
+
+    @keyframes revealPhone {
+      to {
+        opacity: 1;
+      }
+    }
+
+    @keyframes heroLift {
+      from {
+        opacity: 0;
+        transform: translateY(28px) scale(.96);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+      }
+    }
+
+    @keyframes desktopReveal {
+      to {
+        opacity: 1;
+        transform: translateY(0) rotateX(0) rotateY(var(--ry, 0deg)) rotateZ(var(--rz, 0deg)) scale(1);
+      }
+    }
+
+    @keyframes floatMain {
+      from { transform: translate(-50%, -50%) rotateY(-12deg) rotateX(5deg) translateY(0); }
+      to { transform: translate(-50%, -50%) rotateY(-12deg) rotateX(5deg) translateY(-16px); }
+    }
+
+    @keyframes dashMove {
+      to { stroke-dashoffset: -52; }
+    }
+
+    @keyframes ribbonRise {
+      from {
+        opacity: 0;
+        transform: translateY(calc(var(--lift, 0px) + 18px)) scale(.98);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(var(--lift, 0px)) scale(1);
+      }
+    }
+
+    @media (max-width: 1060px) {
+      .cover-stage,
+      .split-stage,
+      .split-stage.reverse,
+      .live-stage,
+      .wide-stage,
+      .closing-stage {
+        grid-template-columns: 1fr;
+      }
+
+      .cover-stage,
+      .split-stage,
+      .split-stage.reverse,
+      .live-stage,
+      .wide-stage {
+        gap: 24px;
+      }
+
+      .hero-cluster {
+        min-height: 46vh;
+      }
+
+      .phone-stage {
+        min-height: 45vh;
+      }
+
+      .phone-stage .phone {
+        width: clamp(168px, 26vw, 226px);
+      }
+
+      .module-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+    }
+
+    @media (max-width: 680px) {
+      .slide {
+        padding: 58px 18px 116px;
+      }
+
+      .topbar-inner {
+        width: calc(100vw - 24px);
+      }
+
+      .title-xl {
+        font-size: clamp(2.55rem, 11vw, 4rem);
+      }
+
+      .title-lg {
+        font-size: clamp(2.08rem, 9.2vw, 3.1rem);
+      }
+
+      .lead {
+        font-size: 1.02rem;
+      }
+
+      .hero-cluster {
+        min-height: 39vh;
+      }
+
+      .phone {
+        width: min(252px, 68vw);
+        padding: 7px;
+        border-radius: 36px;
+      }
+
+      .phone::before {
+        inset: 8px;
+        border-radius: 27px;
+      }
+
+      .phone-screen {
+        border-radius: 28px;
+      }
+
+      .phone-left,
+      .phone-right {
+        opacity: .34;
+      }
+
+      .phone-stage {
+        min-height: 39vh;
+      }
+
+      .phone-stage.two,
+      .phone-stage.dual-focus,
+      .phone-stage.trio {
+        min-height: 39vh;
+      }
+
+      .phone-stage .phone {
+        width: min(198px, 52vw);
+      }
+
+      .phone-stage.two .phone:nth-child(1),
+      .phone-stage.dual-focus .phone:nth-child(1),
+      .phone-stage.trio .phone:nth-child(1) {
+        left: 4%;
+        top: 56%;
+        opacity: .42;
+        transform: translateY(-50%) rotateY(-18deg) rotateZ(-4deg) scale(.82);
+      }
+
+      .phone-stage.two .phone:nth-child(2),
+      .phone-stage.dual-focus .phone:nth-child(2),
+      .phone-stage.trio .phone:nth-child(2) {
+        left: 50%;
+        right: auto;
+        top: 54%;
+        opacity: 1;
+        transform: translate(-50%, -50%) scale(1);
+        z-index: 3;
+      }
+
+      .phone-stage.trio .phone:nth-child(3) {
+        display: none;
+      }
+
+      .live-map {
+        display: none;
+      }
+
+      .live-phone {
+        width: min(226px, 60vw);
+      }
+
+      .live-stage {
+        gap: 12px;
+      }
+
+      .live-stage .title-lg {
+        font-size: clamp(1.98rem, 8.7vw, 2.9rem);
+      }
+
+      .live-stage .tag-row {
+        margin-top: 18px;
+      }
+
+      .module-grid {
+        margin-top: 26px;
+        grid-template-columns: 1fr;
+      }
+
+      .module {
+        min-height: 88px;
+      }
+
+      .module span {
+        display: none;
+      }
+
+      .tag-row {
+        gap: 8px;
+      }
+
+      .tag {
+        min-height: 34px;
+        font-size: 13px;
+      }
+
+      .screen-ribbon {
+        margin-top: 28px;
+        min-height: 300px;
+        height: 35vh;
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+        grid-template-rows: repeat(4, minmax(0, 1fr));
+        gap: 8px;
+      }
+
+      .desktop-showcase {
+        min-height: 32vh;
+      }
+
+      .desktop-frame {
+        width: min(100%, 350px);
+        padding: 6px;
+        border-radius: 12px;
+      }
+
+      .desktop-frame.secondary {
+        display: none;
+      }
+
+      .desktop-screen {
+        border-radius: 7px;
+      }
+
+      .closing-wall {
+        grid-template-columns: repeat(4, 1fr);
+      }
+
+      .controls {
+        max-width: calc(100vw - 20px);
+        overflow: visible;
+      }
+
+      .control-btn {
+        min-width: 38px;
+        padding: 0 11px;
+      }
+
+      #autoBtn {
+        min-width: 50px;
+      }
+
+      .counter {
+        min-width: 48px;
+      }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      *,
+      *::before,
+      *::after {
+        animation-duration: .01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: .01ms !important;
+      }
+
+      #stage-canvas {
+        display: none;
+      }
+    }
+
+    /* ============================================================
+       CINEMATIC OVERDRIVE  ·  light-stage + camera moves (运镜)
+       ============================================================ */
+    :root {
+      --amber: #ffb55a;
+      --ember: #ff7a3c;
+      --ease-cam: cubic-bezier(0.22, 0.9, 0.24, 1);
+    }
+
+    /* Warmer, deeper ambient wash */
+    .ambient {
+      background:
+        radial-gradient(120% 78% at 50% -8%, rgba(255,196,120,.22), transparent 42%),
+        radial-gradient(92% 60% at 74% 28%, rgba(41,151,255,.12), transparent 46%),
+        radial-gradient(82% 60% at 22% 80%, rgba(0,199,190,.10), transparent 44%),
+        linear-gradient(180deg, rgba(0,0,0,0), #000 82%);
+    }
+
+    /* Volumetric light beams sweeping the stage */
+    .stage-fx {
+      position: fixed;
+      inset: 0;
+      z-index: 1;
+      pointer-events: none;
+      overflow: hidden;
+      mix-blend-mode: screen;
+    }
+    .beam {
+      position: absolute;
+      top: -30%;
+      left: 50%;
+      width: clamp(170px, 24vw, 440px);
+      height: 150%;
+      transform-origin: 50% 0;
+      background: linear-gradient(180deg, rgba(255,226,182,.18), rgba(255,200,130,.06) 36%, transparent 72%);
+      filter: blur(24px);
+      opacity: .7;
+      will-change: transform, opacity;
+    }
+    .beam-2 { width: clamp(140px, 17vw, 300px); background: linear-gradient(180deg, rgba(255,236,206,.16), rgba(255,206,150,.05) 38%, transparent 72%); }
+    .beam-3 { background: linear-gradient(180deg, rgba(160,228,255,.14), rgba(0,199,190,.05) 38%, transparent 72%); }
+    .beam-1 { animation: beamSway1 11s var(--ease-soft) infinite alternate; }
+    .beam-2 { animation: beamSway2 9s  var(--ease-soft) infinite alternate; }
+    .beam-3 { animation: beamSway3 13s var(--ease-soft) infinite alternate; }
+    @keyframes beamSway1 { from { transform: translateX(-60%) rotate(-18deg); opacity:.5 } to { transform: translateX(-48%) rotate(-8deg); opacity:.82 } }
+    @keyframes beamSway2 { from { transform: translateX(-54%) rotate(-3deg); opacity:.36 } to { transform: translateX(-44%) rotate(7deg);  opacity:.6 } }
+    @keyframes beamSway3 { from { transform: translateX(-34%) rotate(11deg); opacity:.4 }  to { transform: translateX(-22%) rotate(21deg); opacity:.66 } }
+
+    /* Filmic vignette */
+    .vignette {
+      position: fixed;
+      inset: 0;
+      z-index: 3;
+      pointer-events: none;
+      background: radial-gradient(132% 100% at 50% 42%, transparent 52%, rgba(0,0,0,.40) 84%, rgba(0,0,0,.72) 100%);
+      mix-blend-mode: multiply;
+    }
+
+    /* ---- Camera / 运镜 transitions ---- */
+    .deck { perspective: 1700px; perspective-origin: 50% 44%; }
+    .slide {
+      transition:
+        opacity 680ms var(--ease),
+        transform 940ms var(--ease-cam),
+        filter 820ms var(--ease);
+      transform: translate3d(0, 24px, -150px) scale(1.05);
+      filter: blur(15px) brightness(.55);
+    }
+    .slide.is-active {
+      transform: translate3d(0, 0, 0) scale(1);
+      filter: none;
+    }
+    .deck[data-dir="next"] .slide:not(.is-active) { transform: translate3d(8%, 0, -190px) scale(1.07); }
+    .deck[data-dir="prev"] .slide:not(.is-active) { transform: translate3d(-8%, 0, -190px) scale(1.07); }
+
+    /* Spotlight sweep when a slide takes the stage */
+    .slide.is-active::before {
+      content: "";
+      position: absolute;
+      inset: -2% -10%;
+      z-index: 6;
+      pointer-events: none;
+      background: linear-gradient(112deg, transparent 34%, rgba(255,255,255,.10) 47%, rgba(255,206,140,.10) 52%, transparent 64%);
+      mix-blend-mode: screen;
+      opacity: 0;
+      animation: sweepLight 1150ms var(--ease) 140ms;
+    }
+    @keyframes sweepLight {
+      0%   { opacity: 0; transform: translateX(-32%); }
+      28%  { opacity: 1; }
+      100% { opacity: 0; transform: translateX(34%); }
+    }
+
+    /* ---- Title: character-by-character blur-to-focus reveal ---- */
+    .slide.is-active .title-xl,
+    .slide.is-active .title-lg { animation: none; }
+    .title-xl .ch,
+    .title-lg .ch {
+      display: inline-block;
+      white-space: pre;
+      opacity: 0;
+      transform: translateY(30px) scale(1.015);
+      filter: blur(9px);
+    }
+    .slide.is-active .title-xl .ch,
+    .slide.is-active .title-lg .ch {
+      animation: chReveal 740ms var(--ease) both;
+      animation-delay: calc(var(--ci, 0) * 34ms + 150ms);
+    }
+    @keyframes chReveal { to { opacity: 1; transform: none; filter: none; } }
+
+    /* ---- Device mockups: warm rim light + floor glow ---- */
+    .phone-stage::before,
+    .desktop-showcase::before {
+      background: radial-gradient(ellipse at center, rgba(255,184,108,.26), rgba(41,151,255,.14) 46%, transparent 72%);
+      filter: blur(26px);
+    }
+    .phone {
+      box-shadow:
+        inset 0 0 0 1px rgba(255,255,255,.2),
+        0 0 0 1px rgba(255,196,130,.10),
+        0 34px 80px rgba(0,0,0,.7),
+        0 8px 34px rgba(255,170,90,.12);
+    }
+    .desktop-frame {
+      box-shadow:
+        inset 0 0 0 1px rgba(255,255,255,.18),
+        0 0 0 1px rgba(255,196,130,.08),
+        0 36px 84px rgba(0,0,0,.62),
+        0 10px 34px rgba(120,200,255,.08);
+    }
+    .phone-stage::after {
+      content: "";
+      position: absolute;
+      left: 16%;
+      right: 16%;
+      bottom: 1%;
+      height: 13%;
+      background: radial-gradient(ellipse at center, rgba(255,200,140,.16), transparent 70%);
+      filter: blur(12px);
+      z-index: -1;
+      pointer-events: none;
+    }
+
+    /* Controls + brand warmed to the stage palette */
+    .progress-fill { background: linear-gradient(90deg, var(--amber), var(--teal)); }
+    .control-btn.primary { background: linear-gradient(180deg, #ffb24a, #ff8a2c); color: #2a1700; }
+    .start-btn { background: linear-gradient(180deg, #ffb24a, #ff8a2c); color: #2a1700; box-shadow: 0 16px 40px rgba(255,150,60,.35); }
+    .start-btn:hover,
+    .start-btn:focus-visible { background: linear-gradient(180deg, #ffc05f, #ff963a); transform: translateY(-1px); box-shadow: 0 20px 52px rgba(255,150,60,.5); }
+    .brand-dot { box-shadow: 0 0 22px rgba(255,184,108,.7), 0 0 46px rgba(0,199,190,.3); }
+
+    @media (prefers-reduced-motion: reduce) {
+      .beam { animation: none !important; }
+      .slide { transition-duration: .01ms !important; transform: none !important; filter: none !important; }
+      .slide.is-active::before { animation: none !important; opacity: 0 !important; }
+      .world { transition-duration: .01ms !important; transform: none !important; }
+    }
+
+    /* ---- Spatial camera rig: one 3D space, camera dollies to each slide ---- */
+    .deck { perspective: 1400px; perspective-origin: 50% 48%; overflow: hidden; }
+    .world {
+      position: absolute;
+      inset: 0;
+      transform-style: preserve-3d;
+      /* ease-in-out so the camera accelerates, travels across the space, then settles */
+      transition: transform 1550ms cubic-bezier(0.62, 0.04, 0.24, 1);
+      will-change: transform;
+    }
+    /* slides keep their fixed spot in space (set inline); the camera moves, not them.
+       Slow, overlapping crossfade keeps the previous + next slide visible mid-flight,
+       so you see the camera actually travel past them. */
+    .slide { transition: opacity 1150ms cubic-bezier(0.66, 0.03, 0.30, 1), filter 1100ms var(--ease); }
+    /* each slide reads as a real page floating in the 3D space, so the ones behind
+       are clearly visible as receding cards */
+    .slide-content {
+      background: linear-gradient(155deg, rgba(28,30,38,.60), rgba(10,11,15,.80));
+      border: 1px solid rgba(255,255,255,.09);
+      border-radius: 24px;
+      padding: clamp(26px, 3.2vw, 52px);
+      box-shadow: 0 50px 130px rgba(0,0,0,.6), inset 0 1px 0 rgba(255,255,255,.06);
+    }
+  </style>
+</head>
+<body>
+  <canvas id="stage-canvas" aria-hidden="true"></canvas>
+  <div class="ambient" aria-hidden="true"></div>
+  <div class="stage-fx" aria-hidden="true"><span class="beam beam-1"></span><span class="beam beam-2"></span><span class="beam beam-3"></span></div>
+  <div class="vignette" aria-hidden="true"></div>
+
+  <div class="topbar">
+    <div class="topbar-inner">
+      <a class="brand" href="index.html" aria-label="蒙企链探小程序展示"><span class="brand-dot"></span><span>蒙企链探小程序展示</span></a>
+      <div class="top-actions">
+        <button type="button" id="fullscreenBtn">全屏</button>
+      </div>
+    </div>
+  </div>
+  <div class="progress" aria-hidden="true"><div class="progress-fill" id="progressFill"></div></div>
+
+  <main class="deck" id="deck" aria-live="polite">
+    <div class="world" id="world">
+    <section class="slide is-active" data-slide="0">
+      <div class="slide-content cover-stage">
+        <div>
+          <p class="eyebrow">承接 PPT 小程序架构章节</p>
+          <h1 class="title-xl">把研学现场，装进一支小程序。</h1>
+          <p class="lead">首页、预约、导航、打卡、成果、商城，全流程真实界面。</p>
+        </div>
+        <div class="hero-cluster" aria-label="小程序主画面">
+          <div class="phone phone-left"><div class="phone-screen"><img src="screens/03-project-detail.png" alt="项目详情界面"></div></div>
+          <div class="phone phone-main"><div class="phone-screen"><img src="screens/07-study-live.png" alt="实时研学导航界面"></div></div>
+          <div class="phone phone-right"><div class="phone-screen"><img src="screens/09-study-backpack.png" alt="研学背包界面"></div></div>
+        </div>
+      </div>
+    </section>
+
+    <section class="slide" data-slide="1">
+      <div class="slide-content">
+        <div class="center">
+          <p class="eyebrow">五大模块</p>
+          <h2 class="title-lg">从框架，进入真实产品路径。</h2>
+        </div>
+        <div class="module-grid">
+          <div class="module" style="--i:0"><b>首页</b><span>路线、动态、预约入口。</span></div>
+          <div class="module" style="--i:1"><b>预约下单</b><span>游客、支付、核销码。</span></div>
+          <div class="module primary" style="--i:2"><b>链探导览</b><span>实时地图、扫码打卡、管理员工具。</span></div>
+          <div class="module" style="--i:3"><b>拼图成果</b><span>背包、结算、电子证书。</span></div>
+          <div class="module" style="--i:4"><b>文创商城</b><span>商品、积分、订单。</span></div>
+        </div>
+      </div>
+    </section>
+
+    <section class="slide" data-slide="2">
+      <div class="slide-content split-stage">
+        <div>
+          <p class="eyebrow">首页与预约</p>
+          <h2 class="title-lg">路线、名额、动态，第一屏就被看见。</h2>
+          <div class="tag-row">
+            <span class="tag" style="--i:0">企业路线</span>
+            <span class="tag" style="--i:1">预约入口</span>
+            <span class="tag" style="--i:2">项目动态</span>
+          </div>
+        </div>
+        <div class="phone-stage two" aria-label="首页与预约截图">
+          <div class="phone" style="--i:0"><div class="phone-screen"><img src="screens/01-home.png" alt="首页"></div></div>
+          <div class="phone" style="--i:1"><div class="phone-screen"><img src="screens/02-appointment.png" alt="预约列表"></div></div>
+        </div>
+      </div>
+    </section>
+
+    <section class="slide" data-slide="3">
+      <div class="slide-content split-stage reverse">
+        <div class="phone-stage trio" aria-label="预约下单截图">
+          <div class="phone" style="--i:0"><div class="phone-screen"><img src="screens/03-project-detail.png" alt="项目详情"></div></div>
+          <div class="phone" style="--i:1"><div class="phone-screen"><img src="screens/05-booking-travelers.png" alt="选择游客"></div></div>
+          <div class="phone" style="--i:2"><div class="phone-screen"><img src="screens/06-booking-detail.png" alt="订单详情"></div></div>
+        </div>
+        <div>
+          <p class="eyebrow">预约到核销</p>
+          <h2 class="title-lg">下单之后，现场流程已经准备好。</h2>
+          <div class="tag-row">
+            <span class="tag" style="--i:0">游客实名</span>
+            <span class="tag" style="--i:1">订单状态</span>
+            <span class="tag" style="--i:2">入场核销</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="slide" data-slide="4">
+      <div class="slide-content live-stage">
+        <div>
+          <p class="eyebrow">核心主角</p>
+          <h2 class="title-lg">实时导航页，把线下研学变成任务线。</h2>
+          <div class="tag-row">
+            <span class="tag" style="--i:0">定位</span>
+            <span class="tag" style="--i:1">下一站</span>
+            <span class="tag" style="--i:2">扫码打卡</span>
+            <span class="tag" style="--i:3">知识助手</span>
+          </div>
+          <div class="live-map" aria-hidden="true">
+            <svg class="route-svg" viewBox="0 0 560 330">
+              <path class="route-base" d="M72 260 C148 190, 160 142, 230 126 S345 110, 390 70 S490 54, 520 30" />
+              <path class="route-motion" d="M72 260 C148 190, 160 142, 230 126 S345 110, 390 70 S490 54, 520 30" />
+            </svg>
+            <span class="pin" style="left:10%;bottom:14%">1</span>
+            <span class="pin" style="left:38%;top:45%">2</span>
+            <span class="pin active" style="left:57%;top:36%">3</span>
+            <span class="pin" style="right:18%;top:22%">4</span>
+          </div>
+        </div>
+        <div class="phone live-phone"><div class="phone-screen"><img src="screens/07-study-live.png" alt="实时导航完整界面"></div></div>
+      </div>
+    </section>
+
+    <section class="slide" data-slide="5">
+      <div class="slide-content split-stage">
+        <div>
+          <p class="eyebrow">现场运营</p>
+          <h2 class="title-lg">管理员工具，直接接管研学节奏。</h2>
+          <div class="tag-row">
+            <span class="tag" style="--i:0">开始研学</span>
+            <span class="tag" style="--i:1">点位推进</span>
+            <span class="tag" style="--i:2">学员签到</span>
+          </div>
+        </div>
+        <div class="phone-stage dual-focus" aria-label="管理员和学生端截图">
+          <div class="phone" style="--i:0"><div class="phone-screen"><img src="screens/08-admin-live.png" alt="管理员工具"></div></div>
+          <div class="phone" style="--i:1"><div class="phone-screen"><img src="screens/07-study-live.png" alt="学生端实时导航"></div></div>
+        </div>
+      </div>
+    </section>
+
+    <section class="slide" data-slide="6">
+      <div class="slide-content split-stage reverse">
+        <div class="phone-stage trio" aria-label="打卡成果截图">
+          <div class="phone" style="--i:0"><div class="phone-screen"><img src="screens/09-study-backpack.png" alt="研学背包"></div></div>
+          <div class="phone" style="--i:1"><div class="phone-screen"><img src="screens/10-study-settlement.png" alt="研学结算"></div></div>
+          <div class="phone" style="--i:2"><div class="phone-screen"><img src="screens/12-my-puzzle.png" alt="我的拼图"></div></div>
+        </div>
+        <div>
+          <p class="eyebrow">打卡到成果</p>
+          <h2 class="title-lg">每次扫码，都沉淀成学生带走的作品。</h2>
+          <div class="tag-row">
+            <span class="tag" style="--i:0">拼图解锁</span>
+            <span class="tag" style="--i:1">研学背包</span>
+            <span class="tag" style="--i:2">电子证书</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="slide" data-slide="7">
+      <div class="slide-content split-stage">
+        <div>
+          <p class="eyebrow">文创商城</p>
+          <h2 class="title-lg">研学结束后，企业品牌继续被看见。</h2>
+          <div class="tag-row">
+            <span class="tag" style="--i:0">文创商品</span>
+            <span class="tag" style="--i:1">积分抵扣</span>
+            <span class="tag" style="--i:2">订单管理</span>
+          </div>
+        </div>
+        <div class="phone-stage two" aria-label="文创商城截图">
+          <div class="phone" style="--i:0"><div class="phone-screen"><img src="screens/13-mall.png" alt="文创商城"></div></div>
+          <div class="phone" style="--i:1"><div class="phone-screen"><img src="screens/14-product-order.png" alt="商品详情与订单"></div></div>
+        </div>
+      </div>
+    </section>
+
+    <section class="slide" data-slide="8">
+      <div class="slide-content split-stage reverse">
+        <div class="phone-stage trio" aria-label="个人中心截图">
+          <div class="phone" style="--i:0"><div class="phone-screen"><img src="screens/15-mine.png" alt="我的页面"></div></div>
+          <div class="phone" style="--i:1"><div class="phone-screen"><img src="screens/16-services.png" alt="服务与设置"></div></div>
+          <div class="phone" style="--i:2"><div class="phone-screen"><img src="screens/11-my-appointments.png" alt="我的研学"></div></div>
+        </div>
+        <div>
+          <p class="eyebrow">个人中心</p>
+          <h2 class="title-lg">预约、订单、证书和服务，都回到一个入口。</h2>
+          <div class="tag-row">
+            <span class="tag" style="--i:0">研学号</span>
+            <span class="tag" style="--i:1">常用游客</span>
+            <span class="tag" style="--i:2">售后服务</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="slide" data-slide="9">
+      <div class="slide-content">
+        <div class="center">
+          <p class="eyebrow">全流程实拍</p>
+          <h2 class="title-lg">16 张真实截图，覆盖完整旅程。</h2>
+        </div>
+        <div class="screen-ribbon" aria-label="小程序全流程截图">
+          <div class="ribbon-track">
+            <div class="ribbon-item"><img src="screens/01-home.png" alt="首页"></div>
+            <div class="ribbon-item"><img src="screens/02-appointment.png" alt="预约"></div>
+            <div class="ribbon-item"><img src="screens/03-project-detail.png" alt="详情"></div>
+            <div class="ribbon-item"><img src="screens/04-login-register.png" alt="登录注册"></div>
+            <div class="ribbon-item"><img src="screens/05-booking-travelers.png" alt="游客"></div>
+            <div class="ribbon-item"><img src="screens/06-booking-detail.png" alt="订单"></div>
+            <div class="ribbon-item"><img src="screens/07-study-live.png" alt="实时导航"></div>
+            <div class="ribbon-item"><img src="screens/08-admin-live.png" alt="管理员工具"></div>
+            <div class="ribbon-item"><img src="screens/09-study-backpack.png" alt="背包"></div>
+            <div class="ribbon-item"><img src="screens/10-study-settlement.png" alt="结算"></div>
+            <div class="ribbon-item"><img src="screens/11-my-appointments.png" alt="我的研学"></div>
+            <div class="ribbon-item"><img src="screens/12-my-puzzle.png" alt="我的拼图"></div>
+            <div class="ribbon-item"><img src="screens/13-mall.png" alt="商城"></div>
+            <div class="ribbon-item"><img src="screens/14-product-order.png" alt="商品订单"></div>
+            <div class="ribbon-item"><img src="screens/15-mine.png" alt="我的"></div>
+            <div class="ribbon-item"><img src="screens/16-services.png" alt="服务设置"></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="slide" data-slide="10">
+      <div class="slide-content wide-stage">
+        <div>
+          <p class="eyebrow">官网展示</p>
+          <h2 class="title-lg">官网把平台价值，放到合作方第一眼。</h2>
+          <div class="tag-row">
+            <span class="tag" style="--i:0">平台能力</span>
+            <span class="tag" style="--i:1">业务闭环</span>
+            <span class="tag" style="--i:2">运营中台入口</span>
+          </div>
+        </div>
+        <div class="desktop-showcase" aria-label="官网真实截图">
+          <div class="desktop-frame" style="--i:0">
+            <div class="desktop-screen"><img src="web-screens/01-official-home.png" alt="蒙企链探官网首页"></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="slide" data-slide="11">
+      <div class="slide-content wide-stage">
+        <div>
+          <p class="eyebrow">控制面板</p>
+          <h2 class="title-lg">运营总览、订单、项目和反馈，在后台同屏运转。</h2>
+          <div class="tag-row">
+            <span class="tag" style="--i:0">运营总览</span>
+            <span class="tag" style="--i:1">研学项目</span>
+            <span class="tag" style="--i:2">订单中心</span>
+            <span class="tag" style="--i:3">反馈处理</span>
+          </div>
+        </div>
+        <div class="desktop-showcase" aria-label="控制面板真实截图">
+          <div class="desktop-frame" style="--i:0">
+            <div class="desktop-screen"><img src="web-screens/03-control-panel-overview.png" alt="控制面板运营总览"></div>
+          </div>
+          <div class="desktop-frame secondary" style="--i:1; --ry:-15deg; --rz:2deg">
+            <div class="desktop-screen"><img src="web-screens/02-official-console-preview.png" alt="官网控制台能力预览"></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="slide" data-slide="12">
+      <div class="slide-content closing-stage">
+        <div>
+          <p class="eyebrow">产品化答案</p>
+          <h2 class="title-lg">官网、控制面板和小程序，已经连成完整展示体系。</h2>
+          <div class="links">
+            <a class="pill" href="index.html">重新播放</a>
+          </div>
+        </div>
+        <div class="closing-wall" aria-hidden="true">
+          <img src="web-screens/01-official-home.png" alt="">
+          <img src="web-screens/03-control-panel-overview.png" alt="">
+          <img src="screens/07-study-live.png" alt="">
+          <img src="screens/09-study-backpack.png" alt="">
+        </div>
+      </div>
+    </section>
+    </div>
+  </main>
+
+  <div class="controls" aria-label="播放控制">
+    <button class="control-btn" type="button" id="prevBtn" aria-label="上一页">‹</button>
+    <button class="control-btn primary" type="button" id="playBtn">播放</button>
+    <button class="control-btn" type="button" id="nextBtn" aria-label="下一页">›</button>
+    <span class="counter" id="counter">1 / 13</span>
+    <button class="control-btn" type="button" id="autoBtn">自动</button>
+  </div>
+
+  <div class="start-gate" id="startGate">
+    <div class="start-panel">
+      <h1>蒙企链探小程序展示。</h1>
+      <button class="start-btn" type="button" id="startBtn">播放</button>
+    </div>
+  </div>
+
+  <script>
+    const slides = Array.from(document.querySelectorAll('.slide'));
+    const deck = document.getElementById('deck');
+    const world = document.getElementById('world');
+    const startGate = document.getElementById('startGate');
+    const startBtn = document.getElementById('startBtn');
+    const prevBtn = document.getElementById('prevBtn');
+    const nextBtn = document.getElementById('nextBtn');
+    const playBtn = document.getElementById('playBtn');
+    const autoBtn = document.getElementById('autoBtn');
+    const counter = document.getElementById('counter');
+    const progressFill = document.getElementById('progressFill');
+    const fullscreenBtn = document.getElementById('fullscreenBtn');
+    const prefersReduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    document.querySelectorAll('.ribbon-item').forEach((item, index) => {
+      item.style.setProperty('--ri', index);
+    });
+    document.querySelectorAll('.title-xl, .title-lg').forEach((el) => {
+      const text = el.textContent;
+      el.textContent = '';
+      let i = 0;
+      for (const chunk of Array.from(text)) {
+        const span = document.createElement('span');
+        span.className = 'ch';
+        span.textContent = chunk;
+        span.style.setProperty('--ci', i++);
+        el.appendChild(span);
+      }
+    });
+
+    // Scatter every page at its own random spot and angle in a big 3D volume,
+    // then dock the camera onto whichever one is active. Switching = the camera
+    // flies across the space and turns to face the target page (real 3D travel).
+    const camPos = [];
+    const localMatrix = (p) => {
+      const m = new DOMMatrix();
+      m.translateSelf(p.x, p.y, p.z);
+      m.rotateAxisAngleSelf(1, 0, 0, p.rx);
+      m.rotateAxisAngleSelf(0, 1, 0, p.ry);
+      m.rotateAxisAngleSelf(0, 0, 1, p.rz);
+      return m;
+    };
+    if (!prefersReduced && world) {
+      let seed = 20260616;
+      const rnd = () => { seed = (seed * 1664525 + 1013904223) >>> 0; return seed / 4294967296; };
+      const rr = (a, b) => a + (b - a) * rnd();
+      slides.forEach((s, i) => {
+        const p = (i === 0)
+          ? { x: 0, y: 0, z: 0, rx: 0, ry: 0, rz: 0 }                       // open facing the camera
+          : { x: Math.round(rr(-1500, 1500)), y: Math.round(rr(-850, 850)), z: Math.round(rr(-4200, -500)),
+              rx: Math.round(rr(-18, 18)), ry: Math.round(rr(-34, 34)), rz: Math.round(rr(-8, 8)) };
+        camPos[i] = p;
+        s.style.transform = `translate3d(${p.x}px, ${p.y}px, ${p.z}px) rotateX(${p.rx}deg) rotateY(${p.ry}deg) rotateZ(${p.rz}deg)`;
+      });
+    }
+
+    let current = 0;
+    let started = false;
+    let autoPlaying = false;
+    let autoTimer = 0;
+
+    function setSlide(index) {
+      const target = Math.max(0, Math.min(slides.length - 1, index));
+      if (target !== current) {
+        deck.dataset.dir = target > current ? 'next' : 'prev';
+      }
+      const from = current;
+      current = target;
+      // dock the camera close onto the active page (small pull-back keeps a hint of the space around it);
+      // the travel between two far-apart pages still flies through the open space, revealing the others
+      const W = (!prefersReduced && world && camPos[current]) ? new DOMMatrix().translateSelf(0, 0, -180).multiply(localMatrix(camPos[current]).inverse()) : null;
+      slides.forEach((slide, idx) => {
+        const active = idx === current;
+        slide.classList.toggle('is-active', active);
+        slide.style.pointerEvents = active ? 'auto' : 'none';
+        if (!W) { slide.style.opacity = active ? '1' : '0'; slide.style.filter = 'none'; return; }
+        if (active) { slide.style.opacity = '1'; slide.style.filter = 'none'; return; }
+        const C = W.multiply(localMatrix(camPos[idx]));     // this page's position in camera space
+        const z = C.m43;
+        if (z > -140) { slide.style.opacity = '0'; slide.style.filter = 'none'; return; }  // in front of camera: cull
+        const dist = -z;
+        if (dist > 3600) { slide.style.opacity = '0'; slide.style.filter = 'none'; return; }  // too far: cull (clarity + perf)
+        const op = Math.max(0.06, Math.min(0.5, 0.62 * Math.exp(-dist / 2200)));
+        slide.style.opacity = op.toFixed(3);
+        slide.style.filter = `blur(${Math.min(7, dist / 600).toFixed(1)}px)`;
+      });
+      if (W) {
+        const jump = Math.abs(target - from) > 1;     // multi-step jumps snap to avoid wild flights
+        world.style.transition = jump ? 'none' : '';
+        world.style.transform = W.toString();          // matrix3d that docks the camera onto the active page
+        if (jump) requestAnimationFrame(() => requestAnimationFrame(() => { world.style.transition = ''; }));
+      }
+      counter.textContent = `${current + 1} / ${slides.length}`;
+      progressFill.style.transform = `scaleX(${slides.length <= 1 ? 1 : current / (slides.length - 1)})`;
+      playBtn.textContent = current === slides.length - 1 ? '重播' : '播放';
+      if (window.__stageReact) window.__stageReact(current, slides.length);
+      if (autoPlaying) restartAuto();
+    }
+
+    function begin() {
+      started = true;
+      startGate.classList.add('is-hidden');
+      const active = slides[current];
+      active.classList.remove('is-active');
+      void active.offsetWidth;
+      setSlide(current);
+    }
+
+    function next() {
+      if (!started) {
+        begin();
+        return;
+      }
+      if (current >= slides.length - 1) {
+        stopAuto();
+        return;
+      }
+      setSlide(current + 1);
+    }
+
+    function prev() {
+      if (!started) {
+        begin();
+        return;
+      }
+      setSlide(current - 1);
+    }
+
+    function replay() {
+      begin();
+      setSlide(0);
+    }
+
+    function stopAuto() {
+      autoPlaying = false;
+      autoBtn.textContent = '自动';
+      window.clearTimeout(autoTimer);
+    }
+
+    function restartAuto() {
+      window.clearTimeout(autoTimer);
+      if (!autoPlaying) return;
+      autoTimer = window.setTimeout(() => {
+        if (current >= slides.length - 1) {
+          stopAuto();
+          return;
+        }
+        next();
+      }, 5400);
+    }
+
+    function toggleAuto() {
+      begin();
+      autoPlaying = !autoPlaying;
+      autoBtn.textContent = autoPlaying ? '暂停' : '自动';
+      if (autoPlaying) restartAuto();
+      else window.clearTimeout(autoTimer);
+    }
+
+    startBtn.addEventListener('click', begin);
+    playBtn.addEventListener('click', (event) => {
+      event.stopPropagation();
+      if (current === slides.length - 1) replay();
+      else if (!started) begin();
+      else next();
+    });
+    prevBtn.addEventListener('click', (event) => {
+      event.stopPropagation();
+      prev();
+    });
+    nextBtn.addEventListener('click', (event) => {
+      event.stopPropagation();
+      next();
+    });
+    autoBtn.addEventListener('click', (event) => {
+      event.stopPropagation();
+      toggleAuto();
+    });
+    fullscreenBtn.addEventListener('click', async (event) => {
+      event.stopPropagation();
+      if (!document.fullscreenElement) {
+        await document.documentElement.requestFullscreen?.();
+        fullscreenBtn.textContent = '退出全屏';
+      } else {
+        await document.exitFullscreen?.();
+        fullscreenBtn.textContent = '全屏';
+      }
+    });
+
+    deck.addEventListener('click', (event) => {
+      if (event.target.closest('a, button, .controls')) return;
+      next();
+    });
+
+    window.addEventListener('keydown', (event) => {
+      if (event.key === 'ArrowRight' || event.key === ' ' || event.key === 'PageDown') {
+        event.preventDefault();
+        next();
+      }
+      if (event.key === 'ArrowLeft' || event.key === 'PageUp') {
+        event.preventDefault();
+        prev();
+      }
+      if (event.key === 'Home') {
+        event.preventDefault();
+        replay();
+      }
+      if (event.key === 'Escape') {
+        stopAuto();
+      }
+    });
+
+    setSlide(0);
+
+    function startCanvas() {
+      if (prefersReduced) return;
+      const canvas = document.getElementById('stage-canvas');
+      const ctx = canvas.getContext('2d', { alpha: false });
+      let width = 0, height = 0, dpr = 1;
+      let px = 0, py = 0;
+      let motes = [];
+      let glowWarm = null, glowCool = null;
+
+      // stage state, driven by the active slide
+      let warm = 0.16, warmTarget = 0.16;   // 0 = amber .. 1 = teal
+      let energy = 0, energyTarget = 0;      // pulse on each slide change
+      let beam = 0;
+
+      window.__stageReact = (idx, total) => {
+        warmTarget = total > 1 ? idx / (total - 1) : 0;
+        energyTarget = 1;
+      };
+
+      const mix = (a, b, t) => a + (b - a) * t;
+
+      function makeGlow(r, g, b) {
+        const s = 64;
+        const off = document.createElement('canvas');
+        off.width = off.height = s;
+        const c = off.getContext('2d');
+        const grd = c.createRadialGradient(s / 2, s / 2, 0, s / 2, s / 2, s / 2);
+        grd.addColorStop(0, `rgba(${r},${g},${b},0.95)`);
+        grd.addColorStop(0.35, `rgba(${r},${g},${b},0.4)`);
+        grd.addColorStop(1, `rgba(${r},${g},${b},0)`);
+        c.fillStyle = grd;
+        c.fillRect(0, 0, s, s);
+        return off;
+      }
+
+      function resize() {
+        dpr = Math.min(window.devicePixelRatio || 1, 2);
+        width = canvas.clientWidth;
+        height = canvas.clientHeight;
+        canvas.width = Math.floor(width * dpr);
+        canvas.height = Math.floor(height * dpr);
+        ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+        const count = Math.min(120, Math.floor(width * height / 14000));
+        motes = [];
+        for (let i = 0; i < count; i++) {
+          const z = Math.random();
+          motes.push({
+            x: Math.random() * width,
+            y: Math.random() * height,
+            z,
+            vx: (Math.random() - 0.5) * 0.18,
+            vy: -(0.05 + z * 0.26),
+            r: 0.6 + z * 2.4,
+            a: 0.08 + z * 0.36,
+            cool: Math.random() < 0.42,
+          });
+        }
+      }
+
+      function drawBeam(cx, angle, w, alpha) {
+        ctx.save();
+        ctx.translate(cx, -height * 0.16);
+        ctx.rotate(angle);
+        const g = ctx.createLinearGradient(0, 0, 0, height * 1.5);
+        g.addColorStop(0, `rgba(255,236,206,${alpha})`);
+        g.addColorStop(0.4, `rgba(255,206,150,${alpha * 0.32})`);
+        g.addColorStop(1, 'rgba(255,206,150,0)');
+        ctx.fillStyle = g;
+        ctx.fillRect(-w / 2, 0, w, height * 1.5);
+        ctx.restore();
+      }
+
+      function draw() {
+        warm += (warmTarget - warm) * 0.03;
+        energy += (energyTarget - energy) * 0.12;
+        energyTarget *= 0.92;
+        beam += 0.0016;
+
+        ctx.globalCompositeOperation = 'source-over';
+        ctx.fillStyle = '#000';
+        ctx.fillRect(0, 0, width, height);
+
+        // warm/cool depth haze
+        const hr = Math.round(mix(255, 40, warm));
+        const hg = Math.round(mix(176, 200, warm));
+        const hb = Math.round(mix(96, 210, warm));
+        const warmA = 0.15 + energy * 0.12;
+        const g1 = ctx.createRadialGradient(width * 0.5 + px * 40, height * 0.22 + py * 26, 0, width * 0.5, height * 0.3, Math.max(width, height) * 0.8);
+        g1.addColorStop(0, `rgba(255,250,240,${0.10 + energy * 0.06})`);
+        g1.addColorStop(0.22, `rgba(${hr},${hg},${hb},${warmA})`);
+        g1.addColorStop(0.55, `rgba(${hr},${hg},${hb},${warmA * 0.4})`);
+        g1.addColorStop(1, 'rgba(0,0,0,0)');
+        ctx.fillStyle = g1;
+        ctx.fillRect(0, 0, width, height);
+
+        // volumetric spotlights (additive)
+        ctx.globalCompositeOperation = 'lighter';
+        const sway = Math.sin(beam) * 0.12;
+        const e = 0.09 + energy * 0.12;
+        drawBeam(width * (0.30 + px * 0.02), -0.26 + sway, width * 0.16, e);
+        drawBeam(width * (0.52 + px * 0.02), 0.05 + sway * 0.6, width * 0.12, e * 0.8);
+        drawBeam(width * (0.72 + px * 0.02), 0.30 + sway * 0.8, width * 0.14, e * 0.7);
+
+        // drifting embers / dust with depth
+        for (const m of motes) {
+          m.x += m.vx + px * 0.02 * m.z;
+          m.y += m.vy + py * 0.02 * m.z;
+          if (m.y < -30) { m.y = height + 30; m.x = Math.random() * width; }
+          if (m.x < -30) m.x = width + 30;
+          if (m.x > width + 30) m.x = -30;
+          const size = m.r * (4 + m.z * 7);
+          ctx.globalAlpha = Math.min(0.9, m.a * (0.55 + energy * 0.4));
+          ctx.drawImage(m.cool ? glowCool : glowWarm, m.x - size / 2, m.y - size / 2, size, size);
+        }
+        ctx.globalAlpha = 1;
+        ctx.globalCompositeOperation = 'source-over';
+
+        requestAnimationFrame(draw);
+      }
+
+      window.addEventListener('resize', resize);
+      window.addEventListener('pointermove', (event) => {
+        px = (event.clientX / Math.max(1, window.innerWidth) - 0.5) * 2;
+        py = (event.clientY / Math.max(1, window.innerHeight) - 0.5) * 2;
+      }, { passive: true });
+
+      glowWarm = makeGlow(255, 198, 138);
+      glowCool = makeGlow(186, 232, 255);
+      resize();
+      if (window.__stageReact) window.__stageReact(current, slides.length);
+      draw();
+    }
+
+    startCanvas();
+  </script>
+</body>
+</html>
