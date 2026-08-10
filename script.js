@@ -935,7 +935,6 @@
       github: "https://github.com/0nyx06",
       listene: "https://github.com/0nyx06/listene",
       mqlt: "https://0nyx.cn/mqlt/",
-      downloads: "https://0nyx.cn/downloads/",
       meow: "/meow/",
     };
     const history = [];
@@ -1065,7 +1064,6 @@
           p.appendChild(ok);
           p.appendChild(document.createTextNode(" 2 services online · shipping"));
           termOut.appendChild(p);
-          out("  downloads，见 open");
           scrollDown();
         },
       },
