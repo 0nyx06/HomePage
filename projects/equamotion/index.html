@@ -1,0 +1,147 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="color-scheme" content="dark" />
+    <meta name="theme-color" content="#0a0a0a" />
+    <link rel="icon" href="../../assets/favicon.png?v=2" />
+    <title>方程剧场 - 0Nyx</title>
+    <meta name="description" content="鸿蒙理化学习应用。题目进仿真，关键事件处讲公式、矢量和图像，改参数再验证。" />
+    <link rel="canonical" href="https://www.0nyx.cn/projects/equamotion/" />
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="0Nyx" />
+    <meta property="og:title" content="方程剧场 - 0Nyx" />
+    <meta property="og:description" content="鸿蒙理化学习应用。题目进仿真，关键事件处讲公式、矢量和图像，改参数再验证。" />
+    <meta property="og:url" content="https://www.0nyx.cn/projects/equamotion/" />
+    <meta property="og:image" content="../../assets/og.png" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="方程剧场 - 0Nyx" />
+    <meta name="twitter:description" content="鸿蒙理化学习应用。题目进仿真，关键事件处讲公式、矢量和图像，改参数再验证。" />
+    <meta name="twitter:image" content="../../assets/og.png" />
+    <link rel="preload" href="../../assets/fonts/bricolage-grotesque-latin.woff2" as="font" type="font/woff2" crossorigin />
+    <link rel="preload" href="../../assets/fonts/hanken-grotesk-latin.woff2" as="font" type="font/woff2" crossorigin />
+    <link rel="preload" href="../../assets/fonts/jetbrains-mono-latin.woff2" as="font" type="font/woff2" crossorigin />
+    <link rel="preload" href="../../assets/fonts/noto-sans-sc-page.woff2" as="font" type="font/woff2" crossorigin />
+    <link rel="stylesheet" href="../../styles.css" />
+    <script>
+      document.documentElement.classList.add("js");
+    </script>
+  </head>
+  <body class="page-project">
+    <a class="skip-link" href="#project">跳到项目</a>
+
+    <div class="page-field" aria-hidden="true">
+      <canvas class="page-field__canvas" id="field"></canvas>
+      <div class="page-field__glow" id="glow"></div>
+    </div>
+
+    <header class="site-header" id="top">
+      <a class="brand" href="/" aria-label="0Nyx 首页">
+        <span class="brand__mark" aria-hidden="true"></span>
+        <span class="brand__text">0<span class="brand__accent">Nyx</span></span>
+      </a>
+      <nav class="site-nav" aria-label="主导航">
+        <a href="/#about">关于</a>
+        <a href="/#awards">奖项</a>
+        <a href="/#work">作品</a>
+        <a href="/#articles">文章</a>
+        <a class="site-nav__cta" href="/#contact">联系</a>
+      </nav>
+      <button
+        class="nav-toggle"
+        id="navToggle"
+        type="button"
+        aria-expanded="false"
+        aria-controls="mobileNav"
+        aria-label="打开导航"
+      >
+        <span aria-hidden="true"></span>
+        <span aria-hidden="true"></span>
+      </button>
+      <nav class="mobile-nav" id="mobileNav" aria-label="移动端导航" hidden>
+        <a href="/#about"><span class="mono">01</span>关于</a>
+        <a href="/#awards"><span class="mono">02</span>奖项</a>
+        <a href="/#work"><span class="mono">03</span>作品</a>
+        <a href="/#articles"><span class="mono">04</span>文章</a>
+        <a href="/#contact"><span class="mono">05</span>联系</a>
+      </nav>
+    </header>
+    <button class="nav-scrim" id="navScrim" type="button" aria-label="关闭导航" hidden></button>
+
+    <main>
+      <article class="section project-page" id="project">
+        <p class="project-crumb mono">
+          <a href="/#work">开源项目</a>
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 6l6 6-6 6" /></svg>
+          <span>方程剧场</span>
+        </p>
+
+        <header class="project-hero">
+          <div>
+            <p class="project-kicker mono">HarmonyOS / AI 仿真</p>
+            <h1>方程剧场</h1>
+            <p class="project-hero__lede">面向中学生的鸿蒙 AI 理化学习应用。输入题目后生成可交互科学仿真，在关键事件处讲解公式、矢量和图像。</p>
+            <dl class="project-meta">
+              <div>
+                <dt class="mono">角色</dt>
+                <dd>独立开发</dd>
+              </div>
+              <div>
+                <dt class="mono">状态</dt>
+                <dd>开发中</dd>
+              </div>
+              <div>
+                <dt class="mono">年份</dt>
+                <dd>2026</dd>
+              </div>
+            </dl>
+            <div class="project-hero__actions"></div>
+          </div>
+          <div class="project-art">
+            <canvas
+              class="eq-canvas"
+              id="eqCanvas"
+              width="760"
+              height="480"
+              role="img"
+              aria-label="方程剧场斜抛运动仿真示意动画"
+            >方程剧场斜抛运动仿真示意图</canvas>
+          </div>
+        </header>
+
+        <div class="project-grid">
+          <div class="project-copy">
+            <h2>这个项目做什么</h2>
+            <p>方程剧场不把 AI 当解题器。题目先被解析成受控场景，再用本地仿真推进运动、读数和事件讲解。</p>
+            <p>当前主路径覆盖斜抛等力学模型和一组化学实验。学生可以暂停、改参数、重新验证规律。全程标明仿真估算，不承诺考试级标准答案。</p>
+            <h2>自己做了什么</h2>
+            <ul class="project-points">
+              <li>HarmonyOS 客户端：拍照或文字输入题目，进入实验室和工作台。</li>
+              <li>AI 只产出受控场景 JSON，运动和画面交给本地求解与渲染。</li>
+              <li>关键事件处同步公式、矢量、图像和旁白，改参后立刻重算。</li>
+            </ul>
+          </div>
+          <aside class="project-aside">
+            <h2>技术栈</h2>
+            <ul class="tags"><li>HarmonyOS</li><li>ArkTS</li><li>ArkUI</li><li>Node.js</li><li>AI 解析</li></ul>
+            <p class="project-aside__note">源码尚未公开。需要了解细节可以直接联系我。</p>
+          </aside>
+        </div>
+      </article>
+    </main>
+
+    <footer class="site-footer">
+      <span class="mono">© <span id="year">2026</span> 0Nyx</span>
+      <nav class="site-footer__links mono" aria-label="站点链接">
+        <a href="https://github.com/0nyx06" target="_blank" rel="noopener">GitHub</a>
+        <a href="https://beian.miit.gov.cn/" target="_blank" rel="noopener">蒙ICP备2026008558号-1</a>
+      </nav>
+    </footer>
+
+    <div class="toast" id="toast" role="status" aria-live="polite"></div>
+    <script src="../../script.js"></script>
+  </body>
+</html>

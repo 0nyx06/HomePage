@@ -1,0 +1,152 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="color-scheme" content="dark" />
+    <meta name="theme-color" content="#0a0a0a" />
+    <link rel="icon" href="../../assets/favicon.png?v=2" />
+    <title>蒙企链探 - 0Nyx</title>
+    <meta name="description" content="内蒙古食品产业研学平台。预约、导览打卡、成果沉淀，再接到积分商城和运营后台。" />
+    <link rel="canonical" href="https://www.0nyx.cn/projects/mqlt/" />
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="0Nyx" />
+    <meta property="og:title" content="蒙企链探 - 0Nyx" />
+    <meta property="og:description" content="内蒙古食品产业研学平台。预约、导览打卡、成果沉淀，再接到积分商城和运营后台。" />
+    <meta property="og:url" content="https://www.0nyx.cn/projects/mqlt/" />
+    <meta property="og:image" content="../../assets/og.png" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="蒙企链探 - 0Nyx" />
+    <meta name="twitter:description" content="内蒙古食品产业研学平台。预约、导览打卡、成果沉淀，再接到积分商城和运营后台。" />
+    <meta name="twitter:image" content="../../assets/og.png" />
+    <link rel="preload" href="../../assets/fonts/bricolage-grotesque-latin.woff2" as="font" type="font/woff2" crossorigin />
+    <link rel="preload" href="../../assets/fonts/hanken-grotesk-latin.woff2" as="font" type="font/woff2" crossorigin />
+    <link rel="preload" href="../../assets/fonts/jetbrains-mono-latin.woff2" as="font" type="font/woff2" crossorigin />
+    <link rel="preload" href="../../assets/fonts/noto-sans-sc-page.woff2" as="font" type="font/woff2" crossorigin />
+    <link rel="stylesheet" href="../../styles.css" />
+    <script>
+      document.documentElement.classList.add("js");
+    </script>
+  </head>
+  <body class="page-project">
+    <a class="skip-link" href="#project">跳到项目</a>
+
+    <div class="page-field" aria-hidden="true">
+      <canvas class="page-field__canvas" id="field"></canvas>
+      <div class="page-field__glow" id="glow"></div>
+    </div>
+
+    <header class="site-header" id="top">
+      <a class="brand" href="/" aria-label="0Nyx 首页">
+        <span class="brand__mark" aria-hidden="true"></span>
+        <span class="brand__text">0<span class="brand__accent">Nyx</span></span>
+      </a>
+      <nav class="site-nav" aria-label="主导航">
+        <a href="/#about">关于</a>
+        <a href="/#awards">奖项</a>
+        <a href="/#work">作品</a>
+        <a href="/#articles">文章</a>
+        <a class="site-nav__cta" href="/#contact">联系</a>
+      </nav>
+      <button
+        class="nav-toggle"
+        id="navToggle"
+        type="button"
+        aria-expanded="false"
+        aria-controls="mobileNav"
+        aria-label="打开导航"
+      >
+        <span aria-hidden="true"></span>
+        <span aria-hidden="true"></span>
+      </button>
+      <nav class="mobile-nav" id="mobileNav" aria-label="移动端导航" hidden>
+        <a href="/#about"><span class="mono">01</span>关于</a>
+        <a href="/#awards"><span class="mono">02</span>奖项</a>
+        <a href="/#work"><span class="mono">03</span>作品</a>
+        <a href="/#articles"><span class="mono">04</span>文章</a>
+        <a href="/#contact"><span class="mono">05</span>联系</a>
+      </nav>
+    </header>
+    <button class="nav-scrim" id="navScrim" type="button" aria-label="关闭导航" hidden></button>
+
+    <main>
+      <article class="section project-page" id="project">
+        <p class="project-crumb mono">
+          <a href="/#work">开源项目</a>
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 6l6 6-6 6" /></svg>
+          <span>蒙企链探</span>
+        </p>
+
+        <header class="project-hero">
+          <div>
+            <p class="project-kicker mono">大创赛 / 全栈</p>
+            <h1>蒙企链探</h1>
+            <p class="project-hero__lede">大学生创新创业大赛项目。把内蒙古食品企业资源做成可预约、可导览打卡、可沉淀成果的研学闭环。</p>
+            <dl class="project-meta">
+              <div>
+                <dt class="mono">角色</dt>
+                <dd>独立全栈</dd>
+              </div>
+              <div>
+                <dt class="mono">状态</dt>
+                <dd>已完成</dd>
+              </div>
+              <div>
+                <dt class="mono">年份</dt>
+                <dd>2026</dd>
+              </div>
+            </dl>
+            <div class="project-hero__actions">
+              <a class="btn btn--primary" href="https://github.com/0nyx06/MQLT" rel="noopener" target="_blank">GitHub 仓库<svg viewBox="0 0 24 24" aria-hidden="true" class="btn__icon"><path d="M5 12h14M13 6l6 6-6 6" /></svg></a>
+            </div>
+          </div>
+          <div class="project-art">
+            <canvas
+              class="mqlt-canvas"
+              id="mqltCanvas"
+              width="760"
+              height="480"
+              role="img"
+              aria-label="蒙企链探研学运营数据看板示意图"
+            >蒙企链探研学运营数据看板示意图</canvas>
+          </div>
+        </header>
+
+        <div class="project-grid">
+          <div class="project-copy">
+            <h2>这个项目做什么</h2>
+            <p>蒙企链探面向内蒙古食品产业研学。学生端是 UniApp X 微信小程序，运营后台是 Vue 3，后端是 NestJS、Prisma 和 PostgreSQL。</p>
+            <p>完整链路包括研学预约、现场导览打卡、知识任务、成果档案、积分成长、文创商城和权限后台。</p>
+            <h2>自己做了什么</h2>
+            <ul class="project-points">
+              <li>设计并实现研学预约、打卡、任务、证书和积分兑换。</li>
+              <li>同时做学生端小程序、运营后台和后端数据模型。</li>
+              <li>自己完成部署和联调，把小程序、后台和后端接到同一套接口上。</li>
+            </ul>
+          </div>
+          <aside class="project-aside">
+            <h2>技术栈</h2>
+            <ul class="tags"><li>NestJS</li><li>Prisma</li><li>PostgreSQL</li><li>UniApp X</li><li>Vue 3</li><li>Redis</li></ul>
+                      <a href="https://github.com/0nyx06/MQLT" rel="noopener" target="_blank">
+            打开仓库
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6" /></svg>
+          </a>
+          </aside>
+        </div>
+      </article>
+    </main>
+
+    <footer class="site-footer">
+      <span class="mono">© <span id="year">2026</span> 0Nyx</span>
+      <nav class="site-footer__links mono" aria-label="站点链接">
+        <a href="https://github.com/0nyx06" target="_blank" rel="noopener">GitHub</a>
+        <a href="https://beian.miit.gov.cn/" target="_blank" rel="noopener">蒙ICP备2026008558号-1</a>
+      </nav>
+    </footer>
+
+    <div class="toast" id="toast" role="status" aria-live="polite"></div>
+    <script src="../../script.js"></script>
+  </body>
+</html>

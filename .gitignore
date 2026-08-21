@@ -1,5 +1,7 @@
 .DS_Store
-*.bak
-*.bak.*
+Thumbs.db
 .idea/
 .vscode/
+*.bak
+*.bak.*
+.cache/

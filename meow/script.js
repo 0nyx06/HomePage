@@ -53,6 +53,7 @@ function fitCanvasToDevice() {
 function loadImage(src) {
   return new Promise((resolve, reject) => {
     const image = new Image();
+    image.crossOrigin = "anonymous";
     image.decoding = "async";
     image.onload = () => resolve(image);
     image.onerror = reject;
@@ -71,7 +72,7 @@ async function loadFrames() {
 
     for (let index = 0; index < frameCount; index += 1) {
       try {
-        const frame = await loadImage(`./frames/${sourceId}/frame-${padFrame(index + 1)}.png`);
+        const frame = await loadImage(`frames/${sourceId}/frame-${padFrame(index + 1)}.png`);
         activeFrames.push(frame);
 
         if (activeFrames.length === 1) {
@@ -96,7 +97,7 @@ async function loadLyrics() {
   }
 
   try {
-    const response = await fetch("./music.txt", { cache: "no-store" });
+    const response = await fetch("music.txt", { cache: "no-store" });
     const text = await response.text();
     const lines = text
       .split(/\r?\n/)

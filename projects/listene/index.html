@@ -1,0 +1,151 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="color-scheme" content="dark" />
+    <meta name="theme-color" content="#0a0a0a" />
+    <link rel="icon" href="../../assets/favicon.png?v=2" />
+    <title>ListenE - 0Nyx</title>
+    <meta name="description" content="面向英语学习的 Android AI Agent。生成听力素材与练习卡片，支持精听和错因复盘。" />
+    <link rel="canonical" href="https://www.0nyx.cn/projects/listene/" />
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="0Nyx" />
+    <meta property="og:title" content="ListenE - 0Nyx" />
+    <meta property="og:description" content="面向英语学习的 Android AI Agent。生成听力素材与练习卡片，支持精听和错因复盘。" />
+    <meta property="og:url" content="https://www.0nyx.cn/projects/listene/" />
+    <meta property="og:image" content="../../assets/og.png" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="ListenE - 0Nyx" />
+    <meta name="twitter:description" content="面向英语学习的 Android AI Agent。生成听力素材与练习卡片，支持精听和错因复盘。" />
+    <meta name="twitter:image" content="../../assets/og.png" />
+    <link rel="preload" href="../../assets/fonts/bricolage-grotesque-latin.woff2" as="font" type="font/woff2" crossorigin />
+    <link rel="preload" href="../../assets/fonts/hanken-grotesk-latin.woff2" as="font" type="font/woff2" crossorigin />
+    <link rel="preload" href="../../assets/fonts/jetbrains-mono-latin.woff2" as="font" type="font/woff2" crossorigin />
+    <link rel="preload" href="../../assets/fonts/noto-sans-sc-page.woff2" as="font" type="font/woff2" crossorigin />
+    <link rel="stylesheet" href="../../styles.css" />
+    <script>
+      document.documentElement.classList.add("js");
+    </script>
+  </head>
+  <body class="page-project">
+    <a class="skip-link" href="#project">跳到项目</a>
+
+    <div class="page-field" aria-hidden="true">
+      <canvas class="page-field__canvas" id="field"></canvas>
+      <div class="page-field__glow" id="glow"></div>
+    </div>
+
+    <header class="site-header" id="top">
+      <a class="brand" href="/" aria-label="0Nyx 首页">
+        <span class="brand__mark" aria-hidden="true"></span>
+        <span class="brand__text">0<span class="brand__accent">Nyx</span></span>
+      </a>
+      <nav class="site-nav" aria-label="主导航">
+        <a href="/#about">关于</a>
+        <a href="/#awards">奖项</a>
+        <a href="/#work">作品</a>
+        <a href="/#articles">文章</a>
+        <a class="site-nav__cta" href="/#contact">联系</a>
+      </nav>
+      <button
+        class="nav-toggle"
+        id="navToggle"
+        type="button"
+        aria-expanded="false"
+        aria-controls="mobileNav"
+        aria-label="打开导航"
+      >
+        <span aria-hidden="true"></span>
+        <span aria-hidden="true"></span>
+      </button>
+      <nav class="mobile-nav" id="mobileNav" aria-label="移动端导航" hidden>
+        <a href="/#about"><span class="mono">01</span>关于</a>
+        <a href="/#awards"><span class="mono">02</span>奖项</a>
+        <a href="/#work"><span class="mono">03</span>作品</a>
+        <a href="/#articles"><span class="mono">04</span>文章</a>
+        <a href="/#contact"><span class="mono">05</span>联系</a>
+      </nav>
+    </header>
+    <button class="nav-scrim" id="navScrim" type="button" aria-label="关闭导航" hidden></button>
+
+    <main>
+      <article class="section project-page" id="project">
+        <p class="project-crumb mono">
+          <a href="/#work">开源项目</a>
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 6l6 6-6 6" /></svg>
+          <span>ListenE</span>
+        </p>
+
+        <header class="project-hero">
+          <div>
+            <p class="project-kicker mono">Android / AI Agent</p>
+            <h1>ListenE</h1>
+            <p class="project-hero__lede">一个面向英语学习的 Android AI Agent。把听力生成、练习卡片和错因复盘收进可持续的工作区。</p>
+            <dl class="project-meta">
+              <div>
+                <dt class="mono">角色</dt>
+                <dd>独立开发</dd>
+              </div>
+              <div>
+                <dt class="mono">状态</dt>
+                <dd>公开仓库</dd>
+              </div>
+              <div>
+                <dt class="mono">年份</dt>
+                <dd>2026</dd>
+              </div>
+            </dl>
+            <div class="project-hero__actions">
+              <a class="btn btn--primary" href="https://github.com/0nyx06/ListenE" rel="noopener" target="_blank">GitHub 仓库<svg viewBox="0 0 24 24" aria-hidden="true" class="btn__icon"><path d="M5 12h14M13 6l6 6-6 6" /></svg></a>
+            </div>
+          </div>
+          <div class="project-art">
+            <div class="device" aria-hidden="true">
+              <div class="device__screen">
+                <span class="device__bubble device__bubble--in">生成一段雅思听力练习</span>
+                <span class="device__bubble device__bubble--out">已生成 · 对话 + 5 题 + 音频</span>
+                <span class="device__bubble device__bubble--card mono">card · listening</span>
+              </div>
+            </div>
+          </div>
+        </header>
+
+        <div class="project-grid">
+          <div class="project-copy">
+            <h2>这个项目做什么</h2>
+            <p>ListenE 不是题库 App。用户用自然语言提出学习需求，Agent 生成听力素材、练习卡片和音频，再把过程沉淀进工作区。</p>
+            <p>客户端是 Kotlin 与 Jetpack Compose。后端用 NestJS 和 PostgreSQL 管会话、卡片、进度和 TTS 生成。</p>
+            <h2>自己做了什么</h2>
+            <ul class="project-points">
+              <li>自己写 Android 客户端：聊天、卡片练习、精听回放、词句复盘。</li>
+              <li>自己搭 NestJS 后端：听力生成、卡片契约、学习工作区和进度。</li>
+              <li>把大模型和 TTS 接到真实学习流程里，而不是停在演示对话。</li>
+            </ul>
+          </div>
+          <aside class="project-aside">
+            <h2>技术栈</h2>
+            <ul class="tags"><li>Kotlin</li><li>Jetpack Compose</li><li>NestJS</li><li>PostgreSQL</li><li>MiMo AI</li></ul>
+                      <a href="https://github.com/0nyx06/ListenE" rel="noopener" target="_blank">
+            打开仓库
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6" /></svg>
+          </a>
+          </aside>
+        </div>
+      </article>
+    </main>
+
+    <footer class="site-footer">
+      <span class="mono">© <span id="year">2026</span> 0Nyx</span>
+      <nav class="site-footer__links mono" aria-label="站点链接">
+        <a href="https://github.com/0nyx06" target="_blank" rel="noopener">GitHub</a>
+        <a href="https://beian.miit.gov.cn/" target="_blank" rel="noopener">蒙ICP备2026008558号-1</a>
+      </nav>
+    </footer>
+
+    <div class="toast" id="toast" role="status" aria-live="polite"></div>
+    <script src="../../script.js"></script>
+  </body>
+</html>

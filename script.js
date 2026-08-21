@@ -99,16 +99,6 @@
       });
     }, spyOpts);
     spyTargets.forEach((t) => spy.observe(t));
-
-    const heroEl = document.querySelector(".hero");
-    if (heroEl) {
-      const clearSpy = new IntersectionObserver((entries) => {
-        entries.forEach((e) => {
-          if (e.isIntersecting) setActive("");
-        });
-      }, spyOpts);
-      clearSpy.observe(heroEl);
-    }
   }
 
   /* ---------- reveal on scroll (enhances visible baseline) ---------- */
@@ -417,9 +407,9 @@
         ctx.fill();
       });
       ctx.globalAlpha = 1;
-      label("0nyx.cn/mqlt / console", 58, 20, 7.5, "rgba(255,255,255,0.46)", 400, "left", true);
+      label("github.com/0nyx06/MQLT", 58, 20, 7.5, "rgba(255,255,255,0.46)", 400, "left", true);
 
-      label("研学运营总览", 20, 56, 13, "#f2f5f3", 700);
+      label("研学项目示意", 20, 56, 13, "#f2f5f3", 700);
       ctx.beginPath();
       ctx.fillStyle = "#5fe9aa";
       ctx.arc(362, 52, 3 + Math.sin(phase * 2.2) * 0.7, 0, Math.PI * 2);
@@ -428,7 +418,7 @@
 
       const metrics = [
         ["研学项目", "24", "+3"],
-        ["本月预约", "1,286", "+18%"],
+        ["本月打卡", "128", "+8"],
         ["成果档案", "846", "+12%"]
       ];
       metrics.forEach((metric, index) => {
@@ -448,7 +438,7 @@
       ctx.fill();
       ctx.strokeStyle = "rgba(255,255,255,0.08)";
       ctx.stroke();
-      label("预约趋势", 32, 146, 8, "rgba(255,255,255,0.6)", 600);
+      label("打卡趋势", 32, 146, 8, "rgba(255,255,255,0.6)", 600);
       label("近 7 日", 258, 146, 6.8, "rgba(255,255,255,0.35)", 400, "right");
 
       const values = [0.38, 0.58, 0.46, 0.72, 0.62, 0.86, 0.78];
@@ -472,9 +462,9 @@
       label("实时动态", 296, 146, 8, "rgba(255,255,255,0.6)", 600);
 
       const activity = [
-        ["企业研学", "已签到"],
+        ["示例路线", "已完成"],
         ["成果提交", "待审核"],
-        ["积分兑换", "已完成"]
+        ["学习记录", "已完成"]
       ];
       activity.forEach((item, index) => {
         const y = 166 + index * 27;
@@ -933,8 +923,10 @@
     const MAX_LINES = 300;
     const SITES = {
       github: "https://github.com/0nyx06",
-      listene: "https://github.com/0nyx06/listene",
-      mqlt: "https://0nyx.cn/mqlt/",
+      listene: "/projects/listene/",
+      mqlt: "/projects/mqlt/",
+      homepage: "/projects/homepage/",
+      equamotion: "/projects/equamotion/",
       meow: "/meow/",
     };
     const history = [];
@@ -1008,8 +1000,8 @@
             ["help", "查看可用命令"],
             ["about", "关于我"],
             ["skills", "技术栈"],
-            ["projects", "在做的东西"],
-            ["status", "服务状态"],
+            ["projects", "开源项目"],
+            ["status", "站点状态"],
             ["contact", "联系方式"],
             ["open <site>", "打开站点（open 查看列表）"],
             ["meow", "一只像素小猫"],
@@ -1028,41 +1020,42 @@
       about: {
         desc: "关于我",
         run() {
-          out("我是 0Nyx，一名独立全栈开发者。");
-          out("习惯一个人把产品从想法做到上线：设计后端与数据库、");
-          out("写 Android / 小程序 / Web 客户端、接入 AI 能力，再自己部署运维。");
-          out("做能跑起来、也经得起细看的东西。");
+          out("我是 0Nyx，全栈开发者。");
+          out("目前就读于内蒙古师范大学计算机科学技术学院软件工程专业，2025 级。");
+          out("做 Web、移动端和 AI 方向的项目，从后端、数据到界面，再到部署上线，都能够独立完成。");
+          out("奖项：2026 中国高校计算机大赛 AIGC 创新赛 · 华北赛区二等奖");
         },
       },
       skills: {
         desc: "技术栈",
         run() {
-          out("移动端    Kotlin · Jetpack Compose · Material 3 · UniApp X · 微信小程序");
+          out("移动端    Kotlin · Jetpack Compose · Material 3 · UniApp X");
           out("后端      NestJS · Node.js · TypeScript · Fastify · Prisma · PostgreSQL · Redis");
           out("前端      Vue 3 · Vite · HTML / CSS · Canvas");
           out("AI        LLM 集成 · TTS / ASR · Agent 编排");
-          out("部署      Git · Docker · Nginx · PM2");
+          out("部署      Git · Docker · AWS S3");
         },
       },
       projects: {
-        desc: "在做的东西",
+        desc: "开源项目",
         run() {
-          printLink("ListenE       Android AI Agent 英语听力应用 → ", "https://github.com/0nyx06/listene");
-          printLink("蒙企链探      产业研学服务平台 → ", "https://0nyx.cn/mqlt/");
-          out("方程剧场      鸿蒙 AI 理化仿真 App（HarmonyOS · ArkTS · 开发中）");
-          printLink("更多项目      ", "https://github.com/0nyx06");
+          printLink("ListenE       Android AI Agent → ", "/projects/listene/");
+          printLink("蒙企链探      研学全栈平台 → ", "/projects/mqlt/");
+          printLink("HomePage      个人主页源码 → ", "/projects/homepage/");
+          printLink("方程剧场      鸿蒙理化仿真 → ", "/projects/equamotion/");
+          printLink("更多代码      ", "https://github.com/0nyx06");
           out("（彩蛋藏在头像里，试试 meow）");
         },
       },
       status: {
-        desc: "服务状态",
+        desc: "站点状态",
         run() {
           const p = makeLine("term__line--out");
           const ok = document.createElement("span");
           ok.className = "term__ok";
           ok.textContent = "●";
           p.appendChild(ok);
-          p.appendChild(document.createTextNode(" 2 services online · shipping"));
+          p.appendChild(document.createTextNode(" personal site · learning"));
           termOut.appendChild(p);
           scrollDown();
         },
@@ -1073,7 +1066,7 @@
           out("email   gaoxingyu2006@icloud.com");
           out("wechat  ITGao06");
           printLink("github  ", "https://github.com/0nyx06");
-          out("合作、招聘、或者只是想聊聊技术，都欢迎。");
+          out("想交流技术的话，欢迎发邮件。");
         },
       },
       open: {
@@ -1114,7 +1107,7 @@
           const dir = (args[0] || "").replace(/\/$/, "");
           if (!dir || dir === ".") out("skills/  projects/  about.txt  contact.txt");
           else if (dir === "skills") out("android/  web/  backend/  ai/");
-          else if (dir === "projects") out("listene/  mqlt/");
+          else if (dir === "projects") out("listene/  mqlt/  homepage/  equamotion/");
           else err("ls: 无法访问 '" + dir + "': 没有那个文件或目录");
         },
       },
