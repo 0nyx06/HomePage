@@ -16,7 +16,12 @@
 
   /* ---------- year ---------- */
   const yearEl = document.getElementById("year");
-  if (yearEl) yearEl.textContent = String(new Date().getFullYear());
+  if (yearEl) {
+    const start = 2026;
+    const now = new Date().getFullYear();
+    const end = Math.max(now, start + 1);
+    yearEl.textContent = start + "\u2013" + end;
+  }
 
   /* ---------- header scroll state ---------- */
   const header = document.querySelector(".site-header");
