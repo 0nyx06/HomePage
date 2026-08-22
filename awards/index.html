@@ -1,0 +1,112 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="color-scheme" content="dark" />
+    <meta name="theme-color" content="#0a0a0a" />
+    <link rel="icon" href="../assets/favicon.png?v=2" />
+    <title>奖项 - 0Nyx</title>
+    <meta name="description" content="0Nyx 的奖项列表。可以按年份、赛事和名次搜索筛选。" />
+    <link rel="canonical" href="https://www.0nyx.cn/awards/" />
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="0Nyx" />
+    <meta property="og:title" content="奖项 - 0Nyx" />
+    <meta property="og:description" content="0Nyx 的奖项列表。可以按年份、赛事和名次搜索筛选。" />
+    <meta property="og:url" content="https://www.0nyx.cn/awards/" />
+    <meta property="og:image" content="../assets/og.png" />
+    <link rel="stylesheet" href="../styles.css" />
+    <script>document.documentElement.classList.add("js");</script>
+  </head>
+  <body class="page-project">
+    <a class="skip-link" href="#catalog">跳到列表</a>
+    <div class="page-field" aria-hidden="true">
+      <canvas class="page-field__canvas" id="field"></canvas>
+      <div class="page-field__glow" id="glow"></div>
+    </div>
+    <header class="site-header" id="top">
+      <a class="brand" href="/" aria-label="0Nyx 首页">
+        <span class="brand__mark" aria-hidden="true"></span>
+        <span class="brand__text">0<span class="brand__accent">Nyx</span></span>
+      </a>
+      <nav class="site-nav" aria-label="主导航">
+        <a href="/#about">关于</a>
+        <a href="/#awards">奖项</a>
+        <a href="/#work">作品</a>
+        <a href="/#articles">文章</a>
+        <a class="site-nav__cta" href="/#contact">联系</a>
+      </nav>
+      <button class="nav-toggle" id="navToggle" type="button" aria-expanded="false" aria-controls="mobileNav" aria-label="打开导航">
+        <span aria-hidden="true"></span>
+        <span aria-hidden="true"></span>
+      </button>
+      <nav class="mobile-nav" id="mobileNav" aria-label="移动端导航" hidden>
+        <a href="/#about"><span class="mono">01</span>关于</a>
+        <a href="/#awards"><span class="mono">02</span>奖项</a>
+        <a href="/#work"><span class="mono">03</span>作品</a>
+        <a href="/#articles"><span class="mono">04</span>文章</a>
+        <a href="/#contact"><span class="mono">05</span>联系</a>
+      </nav>
+    </header>
+    <button class="nav-scrim" id="navScrim" type="button" aria-label="关闭导航" hidden></button>
+
+    <main>
+      <section class="section project-page" id="catalog">
+        <p class="project-crumb mono">
+          <a href="/">首页</a>
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 6l6 6-6 6" /></svg>
+          <span>奖项</span>
+        </p>
+        <header class="project-hero">
+          <div>
+            <p class="project-kicker mono">catalog / awards</p>
+            <h1>奖项</h1>
+            <p class="project-hero__lede">拿过的都在这儿。可以搜赛事，也可以按年份和名次筛。</p>
+          </div>
+        </header>
+
+        <div class="catalog-toolbar">
+          <label class="visually-hidden" for="catalogSearch">搜索奖项</label>
+          <input class="catalog-search" id="catalogSearch" type="search" placeholder="搜赛事、名次…" autocomplete="off" />
+          <div class="catalog-tags" id="catalogTags">
+            <button type="button" class="is-on" data-tag="all">全部</button>
+            <button type="button" data-tag="2026">2026</button>
+            <button type="button" data-tag="aigc">AIGC</button>
+            <button type="button" data-tag="second">二等奖</button>
+          </div>
+        </div>
+        <p class="catalog-count mono" id="catalogCount"></p>
+
+        <div class="awards">
+          <table class="awards__table">
+            <thead>
+              <tr>
+                <th scope="col">年份</th>
+                <th scope="col">赛事</th>
+                <th scope="col">名次</th>
+              </tr>
+            </thead>
+            <tbody id="catalogList">
+              <tr data-catalog-item data-tags="2026 aigc second" data-search="2026 中国高校计算机大赛 aigc 创新赛 华北赛区 二等奖">
+                <td class="mono">2026</td>
+                <td>中国高校计算机大赛 · AIGC 创新赛</td>
+                <td>华北赛区二等奖</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <p class="catalog-empty" id="catalogEmpty" hidden>没有匹配的奖项。</p>
+      </section>
+    </main>
+
+    <footer class="site-footer">
+      <span class="mono">© <span id="year">2026</span> 0Nyx</span>
+      <nav class="site-footer__links mono" aria-label="站点链接">
+        <a href="https://beian.miit.gov.cn/" target="_blank" rel="noopener">蒙ICP备2026008558号-1</a>
+      </nav>
+    </footer>
+    <div class="toast" id="toast" role="status" aria-live="polite"></div>
+    <script src="../script.js"></script>
+    <script src="../catalog.js"></script>
+  </body>
+</html>

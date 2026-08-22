@@ -2,12 +2,171 @@
 <html lang="zh-CN">
   <head>
     <meta charset="UTF-8" />
-    <meta http-equiv="refresh" content="0;url=/#work" />
-    <link rel="canonical" href="https://www.0nyx.cn/#work" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="color-scheme" content="dark" />
+    <meta name="theme-color" content="#0a0a0a" />
+    <link rel="icon" href="../assets/favicon.png?v=2" />
     <title>开源项目 - 0Nyx</title>
-    <script>location.replace("/#work");</script>
+    <meta name="description" content="0Nyx 的开源项目列表。可以按名字、技术栈搜索和筛选。" />
+    <link rel="canonical" href="https://www.0nyx.cn/projects/" />
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="0Nyx" />
+    <meta property="og:title" content="开源项目 - 0Nyx" />
+    <meta property="og:description" content="0Nyx 的开源项目列表。可以按名字、技术栈搜索和筛选。" />
+    <meta property="og:url" content="https://www.0nyx.cn/projects/" />
+    <meta property="og:image" content="../assets/og.png" />
+    <link rel="stylesheet" href="../styles.css" />
+    <script>document.documentElement.classList.add("js");</script>
   </head>
-  <body>
-    <p><a href="/#work">打开开源项目</a></p>
+  <body class="page-project">
+    <a class="skip-link" href="#catalog">跳到列表</a>
+    <div class="page-field" aria-hidden="true">
+      <canvas class="page-field__canvas" id="field"></canvas>
+      <div class="page-field__glow" id="glow"></div>
+    </div>
+    <header class="site-header" id="top">
+      <a class="brand" href="/" aria-label="0Nyx 首页">
+        <span class="brand__mark" aria-hidden="true"></span>
+        <span class="brand__text">0<span class="brand__accent">Nyx</span></span>
+      </a>
+      <nav class="site-nav" aria-label="主导航">
+        <a href="/#about">关于</a>
+        <a href="/#awards">奖项</a>
+        <a href="/#work">作品</a>
+        <a href="/#articles">文章</a>
+        <a class="site-nav__cta" href="/#contact">联系</a>
+      </nav>
+      <button class="nav-toggle" id="navToggle" type="button" aria-expanded="false" aria-controls="mobileNav" aria-label="打开导航">
+        <span aria-hidden="true"></span>
+        <span aria-hidden="true"></span>
+      </button>
+      <nav class="mobile-nav" id="mobileNav" aria-label="移动端导航" hidden>
+        <a href="/#about"><span class="mono">01</span>关于</a>
+        <a href="/#awards"><span class="mono">02</span>奖项</a>
+        <a href="/#work"><span class="mono">03</span>作品</a>
+        <a href="/#articles"><span class="mono">04</span>文章</a>
+        <a href="/#contact"><span class="mono">05</span>联系</a>
+      </nav>
+    </header>
+    <button class="nav-scrim" id="navScrim" type="button" aria-label="关闭导航" hidden></button>
+
+    <main>
+      <section class="section project-page" id="catalog">
+        <p class="project-crumb mono">
+          <a href="/">首页</a>
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 6l6 6-6 6" /></svg>
+          <span>开源项目</span>
+        </p>
+        <header class="project-hero">
+          <div>
+            <p class="project-kicker mono">catalog / work</p>
+            <h1>开源项目</h1>
+            <p class="project-hero__lede">全部项目都在这儿。可以搜名字，也可以按标签筛。</p>
+          </div>
+        </header>
+
+        <div class="catalog-toolbar">
+          <label class="visually-hidden" for="catalogSearch">搜索项目</label>
+          <input class="catalog-search" id="catalogSearch" type="search" placeholder="搜名字、技术栈…" autocomplete="off" />
+          <div class="catalog-tags" id="catalogTags">
+            <button type="button" class="is-on" data-tag="all">全部</button>
+            <button type="button" data-tag="android">Android</button>
+            <button type="button" data-tag="ai">AI</button>
+            <button type="button" data-tag="fullstack">全栈</button>
+            <button type="button" data-tag="web">Web</button>
+            <button type="button" data-tag="harmonyos">HarmonyOS</button>
+            <button type="button" data-tag="wip">开发中</button>
+          </div>
+        </div>
+        <p class="catalog-count mono" id="catalogCount"></p>
+
+        <ol class="project-list catalog-list" id="catalogList">
+          <li data-catalog-item data-tags="android ai fullstack" data-search="listene android ai agent kotlin compose nestjs postgresql 英语 听力">
+            <a class="project-row" href="/projects/listene/">
+              <span class="project-row__idx mono">01</span>
+              <div class="project-row__body">
+                <div class="project-row__top">
+                  <h3>ListenE</h3>
+                  <span class="project-row__tag mono">Android / AI Agent</span>
+                </div>
+                <p>面向英语学习的 Android AI Agent。生成听力素材与练习卡片，支持精听和错因复盘。</p>
+                <ul class="project-row__stack mono" aria-label="技术栈">
+                  <li>Kotlin</li><li>Compose</li><li>NestJS</li><li>PostgreSQL</li>
+                </ul>
+              </div>
+              <span class="project-row__go" aria-hidden="true">
+                <svg viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6" /></svg>
+              </span>
+            </a>
+          </li>
+          <li data-catalog-item data-tags="fullstack web" data-search="mqlt 蒙企链探 nestjs prisma uniapp vue 研学 全栈">
+            <a class="project-row" href="/projects/mqlt/">
+              <span class="project-row__idx mono">02</span>
+              <div class="project-row__body">
+                <div class="project-row__top">
+                  <h3>蒙企链探</h3>
+                  <span class="project-row__tag mono">大创赛 / 全栈</span>
+                </div>
+                <p>内蒙古食品产业研学平台。预约、导览打卡、成果沉淀，再接到积分商城和运营后台。</p>
+                <ul class="project-row__stack mono" aria-label="技术栈">
+                  <li>NestJS</li><li>Prisma</li><li>UniApp X</li><li>Vue 3</li>
+                </ul>
+              </div>
+              <span class="project-row__go" aria-hidden="true">
+                <svg viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6" /></svg>
+              </span>
+            </a>
+          </li>
+          <li data-catalog-item data-tags="web" data-search="homepage 个人主页 html css javascript 开源">
+            <a class="project-row" href="/projects/homepage/">
+              <span class="project-row__idx mono">03</span>
+              <div class="project-row__body">
+                <div class="project-row__top">
+                  <h3>HomePage</h3>
+                  <span class="project-row__tag mono">个人主页 / 开源</span>
+                </div>
+                <p>这个站的源码。暗色页面、项目列表和详情页，喜欢的话可以直接拿去改。</p>
+                <ul class="project-row__stack mono" aria-label="技术栈">
+                  <li>HTML</li><li>CSS</li><li>JavaScript</li>
+                </ul>
+              </div>
+              <span class="project-row__go" aria-hidden="true">
+                <svg viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6" /></svg>
+              </span>
+            </a>
+          </li>
+          <li data-catalog-item data-tags="harmonyos ai wip" data-search="equamotion 方程剧场 harmonyos arkts arkui 仿真 理化">
+            <a class="project-row" href="/projects/equamotion/">
+              <span class="project-row__idx mono">04</span>
+              <div class="project-row__body">
+                <div class="project-row__top">
+                  <h3>方程剧场</h3>
+                  <span class="project-row__tag mono">HarmonyOS / AI 仿真</span>
+                  <span class="feature__pill mono">开发中</span>
+                </div>
+                <p>鸿蒙理化学习应用。题目进仿真，关键事件处讲公式、矢量和图像，改参数再验证。</p>
+                <ul class="project-row__stack mono" aria-label="技术栈">
+                  <li>ArkTS</li><li>ArkUI</li><li>Node.js</li><li>AI 解析</li>
+                </ul>
+              </div>
+              <span class="project-row__go" aria-hidden="true">
+                <svg viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6" /></svg>
+              </span>
+            </a>
+          </li>
+        </ol>
+        <p class="catalog-empty" id="catalogEmpty" hidden>没有匹配的项目。</p>
+      </section>
+    </main>
+
+    <footer class="site-footer">
+      <span class="mono">© <span id="year">2026</span> 0Nyx</span>
+      <nav class="site-footer__links mono" aria-label="站点链接">
+        <a href="https://beian.miit.gov.cn/" target="_blank" rel="noopener">蒙ICP备2026008558号-1</a>
+      </nav>
+    </footer>
+    <div class="toast" id="toast" role="status" aria-live="polite"></div>
+    <script src="../script.js"></script>
+    <script src="../catalog.js"></script>
   </body>
 </html>
